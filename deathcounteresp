@@ -1,0 +1,209 @@
+--[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local strongSkills = {
+    ["Omni Directional Punch"] = true,
+    ["Death Counter"] = true,
+    ["Serious Punch"] = true,
+    ["Table Flip"] = true
+}
+local weakSkills = {
+    ["Consecutive Punches"] = true,
+    ["Normal Punch"] = true,
+    ["Shove"] = true,
+    ["Uppercut"] = true
+}
+
+local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+ScreenGui.Name = "ESP_DeathCounter_UI"
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 250, 0, 120)
+Frame.Position = UDim2.new(0.5, -125, 0.5, -60)
+Frame.BackgroundColor3 = Color3.fromRGB(20,20,25)
+Frame.BorderSizePixel = 0
+Frame.ClipsDescendants = true
+Instance.new("UICorner", Frame)
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1,0,0,28)
+Title.Position = UDim2.new(0,0,0,0)
+Title.BackgroundTransparency = 1
+Title.Text = "⚰️ ESP Death Counter"
+Title.TextColor3 = Color3.fromRGB(255,80,80)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+
+local toggleBtn = Instance.new("TextButton", Frame)
+toggleBtn.Size = UDim2.new(1,-20,0,35)
+toggleBtn.Position = UDim2.new(0,10,0,35)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(70,200,100)
+toggleBtn.TextColor3 = Color3.new(1,1,1)
+toggleBtn.Font = Enum.Font.GothamSemibold
+toggleBtn.TextSize = 14
+toggleBtn.Text = "🟢 ESP Death Counter"
+Instance.new("UICorner", toggleBtn)
+
+local collapseBtn = Instance.new("TextButton", Frame)
+collapseBtn.Size = UDim2.new(0,20,0,20)
+collapseBtn.Position = UDim2.new(1,-25,0,5)
+collapseBtn.BackgroundColor3 = Color3.fromRGB(150,150,150)
+collapseBtn.TextColor3 = Color3.new(1,1,1)
+collapseBtn.Font = Enum.Font.GothamBold
+collapseBtn.TextSize = 18
+collapseBtn.Text = "-"
+Instance.new("UICorner", collapseBtn)
+
+local expanded = true
+collapseBtn.MouseButton1Click:Connect(function()
+    if expanded then
+        TweenService:Create(Frame, TweenInfo.new(0.3), {Size=UDim2.new(0,250,0,28)}):Play()
+        collapseBtn.Text = "+"
+        expanded = false
+    else
+        TweenService:Create(Frame, TweenInfo.new(0.3), {Size=UDim2.new(0,250,0,120)}):Play()
+        collapseBtn.Text = "-"
+        expanded = true
+    end
+end)
+
+local espEnabled = true
+toggleBtn.MouseButton1Click:Connect(function()
+    espEnabled = not espEnabled
+    toggleBtn.BackgroundColor3 = espEnabled and Color3.fromRGB(70,200,100) or Color3.fromRGB(100,100,100)
+    toggleBtn.Text = espEnabled and "🟢 ESP Death Counter" or "🔴 ESP Death Counter"
+end)
+
+local Overlay = Instance.new("Frame", ScreenGui)
+Overlay.Size = UDim2.new(1,0,1,0)
+Overlay.Position = UDim2.new(0,0,0,0)
+Overlay.BackgroundColor3 = Color3.new(0,0,0)
+Overlay.BackgroundTransparency = 0.6
+Overlay.Active = false
+Overlay.Selectable = false
+Overlay.ZIndex = 1000
+
+local Label = Instance.new("TextLabel", Overlay)
+Label.Size = UDim2.new(1,0,1,0)
+Label.BackgroundTransparency = 1
+Label.Text = "💢 = ult\n☠ = death counter"
+Label.TextColor3 = Color3.new(1,1,1)
+Label.TextScaled = true
+Label.Font = Enum.Font.GothamBold
+Label.TextWrapped = true
+Label.ZIndex = 1001
+
+task.delay(2, function() Overlay:Destroy() end)
+
+local state = {}
+
+local function createBillboard(target, text)
+    if not (target and target:FindFirstChild("Head")) then return end
+    local bb = target.Head:FindFirstChild("SkillTag") or Instance.new("BillboardGui")
+    bb.Name = "SkillTag"
+    bb.Size = UDim2.new(0,100,0,40)
+    bb.StudsOffset = Vector3.new(0,2.5,0)
+    bb.Adornee = target.Head
+    bb.AlwaysOnTop = true
+    if not bb.Parent then bb.Parent = target.Head end
+
+    local label = bb:FindFirstChild("TextLabel") or Instance.new("TextLabel", bb)
+    label.Size = UDim2.new(1,0,1,0)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.GothamBold
+    label.TextScaled = true
+    label.TextColor3 = Color3.new(1,1,1)
+    label.TextStrokeTransparency = 0.5
+    label.Text = text
+end
+
+local function removeBillboard(target)
+    if target and target:FindFirstChild("Head") and target.Head:FindFirstChild("SkillTag") then
+        target.Head.SkillTag:Destroy()
+    end
+end
+
+local function getSkillType(backpack)
+    for _, tool in ipairs(backpack:GetChildren()) do
+        if strongSkills[tool.Name] then return "strong" end
+        if weakSkills[tool.Name] then return "weak" end
+    end
+end
+
+RunService.Heartbeat:Connect(function()
+    if not espEnabled then return end
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= player then
+            local char = plr.Character
+            local backpack = plr:FindFirstChildOfClass("Backpack")
+            if char and backpack then
+                local skillType = getSkillType(backpack)
+                local lastState = state[plr]
+
+                if not lastState then
+                    state[plr] = skillType
+                    if skillType == "strong" then
+                        createBillboard(char, "💢")
+                    else
+                        removeBillboard(char)
+                    end
+                else
+                    if skillType == "strong" then
+                        if lastState ~= "strong" then
+                            createBillboard(char, "💢")
+                        end
+                        state[plr] = "strong"
+                    elseif skillType == "weak" and lastState == "strong" then
+                        createBillboard(char, "☠")
+                        state[plr] = "weak"
+                        task.delay(math.random(8,9), function()
+                            if state[plr] == "weak" then
+                                removeBillboard(char)
+                            end
+                        end)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+local dragging, dragInput, dragStart, startPos = false, nil, nil, nil
+
+local function update(input)
+    local delta = input.Position - dragStart
+    Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                               startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = Frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+Frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        update(input)
+    end
+end)
