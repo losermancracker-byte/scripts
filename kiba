@@ -1,0 +1,298 @@
+-- ts file was generated at discord.gg/25ms
+
+
+local v1 = game:GetService("Players")
+game:GetService("TweenService")
+game:GetService("RunService")
+local vu2 = v1.LocalPlayer
+local vu3 = vu2.Character or vu2.CharacterAdded:Wait()
+local v4 = vu3
+local vu5 = vu3.WaitForChild(v4, "Humanoid")
+local v6 = vu3
+local vu7 = vu3.WaitForChild(v6, "HumanoidRootPart")
+local vu8 = {
+    ["10503381238"] = true,
+    ["13379003796"] = true
+}
+local vu9 = {
+    ["10479335397"] = true,
+    ["13380255751"] = true
+}
+local vu10 = nil
+local vu11 = nil
+local vu12 = nil
+local vu13 = nil
+local vu14 = false
+local vu15 = 10
+local vu16 = false
+local vu17 = Instance.new("ScreenGui", vu2:WaitForChild("PlayerGui"))
+vu17.Name = "AutoFollowToggle"
+vu17.ResetOnSpawn = false
+local vu18 = Instance.new("TextButton")
+vu18.Size = UDim2.new(0, 100, 0, 20)
+vu18.Position = UDim2.new(0, 100, 0, 50)
+vu18.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+vu18.Text = "Kiba Tech V3 made by xen: OFF"
+vu18.TextColor3 = Color3.fromRGB(255, 255, 255)
+vu18.Font = Enum.Font.GothamBold
+vu18.TextScaled = true
+vu18.Active = true
+vu18.Draggable = true
+vu18.Parent = vu17
+Instance.new("UICorner", vu18).CornerRadius = UDim.new(0, 12)
+local v19 = Instance.new("UIGradient", vu18)
+v19.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(255, 127, 0)),
+    ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 255, 0)),
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 0, 255)),
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(148, 0, 211)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+})
+v19.Rotation = 10
+local vu20 = Instance.new("UIStroke", vu18)
+vu20.Thickness = 1
+
+-- New No Cooldown Toggle Button
+local vu_noCooldown = false
+local vu18_noCooldown = Instance.new("TextButton")
+vu18_noCooldown.Size = UDim2.new(0, 100, 0, 20)
+vu18_noCooldown.Position = UDim2.new(0, 100, 0, 75)  -- Directly below the first button
+vu18_noCooldown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+vu18_noCooldown.Text = "No Cooldown: OFF"
+vu18_noCooldown.TextColor3 = Color3.fromRGB(255, 255, 255)
+vu18_noCooldown.Font = Enum.Font.GothamBold
+vu18_noCooldown.TextScaled = true
+vu18_noCooldown.Active = true
+vu18_noCooldown.Draggable = true
+vu18_noCooldown.Parent = vu17
+Instance.new("UICorner", vu18_noCooldown).CornerRadius = UDim.new(0, 12)
+local v19_no = Instance.new("UIGradient", vu18_noCooldown)
+v19_no.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(255, 127, 0)),
+    ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 255, 0)),
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 0, 255)),
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(148, 0, 211)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+})
+v19_no.Rotation = 10
+local vu20_no = Instance.new("UIStroke", vu18_noCooldown)
+vu20_no.Thickness = 1
+
+local vu21 = game:GetService("Players")
+local vu22 = game:GetService("TweenService")
+local vu23 = game:GetService("RunService")
+task.spawn(function()
+    local v24 = 0
+    while task.wait(0.15) do
+        v24 = (v24 + 1) % 360
+        vu20.Color = Color3.fromHSV(v24 / 360, 1, 1)
+        vu20_no.Color = Color3.fromHSV(v24 / 360, 1, 1)
+    end
+end)
+local function vu34(p25)
+    vu16 = true
+    local vu26 = Instance.new("Frame")
+    vu26.Size = UDim2.new(0, 180, 0, 18)
+    vu26.Position = UDim2.new(0.5, - 90, 0.4, 80)
+    vu26.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    vu26.Transparency = 1
+    vu26.BorderSizePixel = 0
+    vu26.Parent = vu17
+    Instance.new("UICorner", vu26).CornerRadius = UDim.new(0, 10)
+    local v27 = Instance.new("Frame")
+    v27.Size = UDim2.new(0, 0, 1, 0)
+    v27.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    v27.BorderSizePixel = 0
+    v27.Parent = vu26
+    Instance.new("UICorner", v27).CornerRadius = UDim.new(0, 10)
+    local v28 = Instance.new("TextLabel")
+    v28.Size = UDim2.new(1, 0, 1, 0)
+    v28.BackgroundTransparency = 1
+    v28.Text = "Kiba Tech V3..."
+    v28.TextColor3 = Color3.new(1, 1, 1)
+    v28.Font = Enum.Font.GothamBold
+    v28.TextScaled = true
+    v28.Parent = vu26
+    local vu33 = Instance.new("ParticleEmitter")
+    vu33.Texture = "rbxassetid://243660364"
+    vu33.Rate = 6
+    vu33.Lifetime = NumberRange.new(1.2, 1.6)
+    vu33.Speed = NumberRange.new(0, 0)
+    vu33.Rotation = NumberRange.new(0, 360)
+    vu33.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 2),
+        NumberSequenceKeypoint.new(0.5, 6),
+        NumberSequenceKeypoint.new(1, 10)
+    })
+    vu33.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.3),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+    vu33.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 255))
+    })
+    vu33.LightEmission = 0.6
+    vu33.Parent = vu7
+    vu22:Create(v27, TweenInfo.new(p25, Enum.EasingStyle.Linear), {
+        Size = UDim2.new(1, 0, 1, 0)
+    }):Play()
+    task.delay(p25, function()
+        vu16 = false
+        vu26:Destroy()
+        if vu33 then
+            vu33:Destroy()
+        end
+    end)
+end
+local function vu40()
+    if vu10 then
+        vu10:Destroy()
+    end
+    if vu11 then
+        vu11:Destroy()
+    end
+    if vu12 then
+        vu12:Disconnect()
+    end
+    if vu13 then
+        vu13:Destroy()
+    end
+    local v35 = vu7
+    local v36, v37, v38 = ipairs(v35:GetChildren())
+    while true do
+        local v39
+        v38, v39 = v36(v37, v38)
+        if v38 == nil then
+            break
+        end
+        if v39:IsA("Attachment") or v39.Name == "HasSnapped" then
+            v39:Destroy()
+        end
+    end
+end
+local function vu48(pu41)
+    vu40()
+    vu13 = Instance.new("Part")
+    vu13.Size = Vector3.new(0.5, 0.5, 0.5)
+    vu13.Transparency = 1
+    vu13.Anchored = true
+    vu13.CanCollide = false
+    vu13.Name = "FollowPart"
+    vu13.Parent = workspace
+    local v42 = Instance.new("Attachment", vu7)
+    local v43 = Instance.new("Attachment", vu13)
+    local v44 = Instance.new("Attachment", vu7)
+    local v45 = Instance.new("Attachment", vu13)
+    vu10 = Instance.new("AlignPosition")
+    vu10.Attachment0 = v42
+    vu10.Attachment1 = v43
+    vu10.RigidityEnabled = true
+    vu10.Responsiveness = 200
+    vu10.MaxForce = math.huge
+    vu10.Parent = vu7
+    vu11 = Instance.new("AlignOrientation")
+    vu11.Attachment0 = v44
+    vu11.Attachment1 = v45
+    vu11.RigidityEnabled = true
+    vu11.Responsiveness = 100
+    vu11.MaxTorque = math.huge
+    vu11.Parent = vu7
+    vu12 = vu23.RenderStepped:Connect(function()
+        if pu41 and pu41.Parent then
+            local v46 = pu41.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(55), 0, 0)
+            vu13.CFrame = v46
+            if not vu7:FindFirstChild("HasSnapped") then
+                vu7.CFrame = v46
+                local v47 = Instance.new("BoolValue")
+                v47.Name = "HasSnapped"
+                v47.Parent = vu7
+            end
+        end
+    end)
+end
+local function vu58()
+    local v49 = vu15
+    local v50, v51, v52 = pairs(workspace.Live:GetChildren())
+    local v53 = nil
+    while true do
+        local v54
+        v52, v54 = v50(v51, v52)
+        if v52 == nil then
+            break
+        end
+        if v54:IsA("Model") and v54 ~= vu3 then
+            local v55 = v54:FindFirstChild("HumanoidRootPart")
+            local v56 = v54:FindFirstChildOfClass("Humanoid")
+            if v55 and (v56 and v56.Health > 0) then
+                local v57 = (v55.Position - vu7.Position).Magnitude
+                if v57 <= v49 then
+                    if v54.Name == "Weakest Dummy" then
+                        v53 = v55
+                        v49 = v57
+                    elseif vu21:GetPlayerFromCharacter(v54) then
+                        v53 = v55
+                        v49 = v57
+                    end
+                end
+            end
+        end
+    end
+    return v53
+end
+local function vu63(p59)
+    if vu14 and (vu_noCooldown or not vu16) then  -- Cooldown bypassed if No Cooldown is ON
+        local v60 = string.match(p59.Animation.AnimationId, "%d+")
+        if vu9[v60] then
+            vu16 = true
+            task.delay(0.8, function()
+                vu34(4.6)
+            end)
+        elseif vu8[v60] then
+            vu16 = true
+            task.delay(0.32, function()
+                local vu61 = {
+                    {
+                        Dash = Enum.KeyCode.W,
+                        Key = Enum.KeyCode.Q,
+                        Goal = "KeyPress"
+                    }
+                }
+                pcall(function()
+                    vu2.Character:WaitForChild("Communicate"):FireServer(unpack(vu61))
+                end)
+                local v62 = vu58()
+                if v62 then
+                    vu48(v62)
+                    task.delay(0.5, vu40)
+                end
+            end)
+            task.delay(0.8, function()
+                vu34(4.6)
+            end)
+        end
+    end
+end
+local function vu64()
+    vu3 = vu2.Character or vu2.CharacterAdded:Wait()
+    vu5 = vu3:WaitForChild("Humanoid")
+    vu7 = vu3:WaitForChild("HumanoidRootPart")
+    vu5.AnimationPlayed:Connect(vu63)
+end
+vu64()
+vu2.CharacterAdded:Connect(function()
+    task.wait(0.1)
+    vu64()
+end)
+vu18.MouseButton1Click:Connect(function()
+    vu14 = not vu14
+    vu18.Text = vu14 and "Kiba Tech V3 made by xen: ON" or "Kiba Tech V3 made by xen: OFF"
+end)
+
+-- No Cooldown Toggle Click
+vu18_noCooldown.MouseButton1Click:Connect(function()
+    vu_noCooldown = not vu_noCooldown
+    vu18_noCooldown.Text = vu_noCooldown and "No Cooldown: ON" or "No Cooldown: OFF"
+end)
