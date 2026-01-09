@@ -1,0 +1,29 @@
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Function to find and auto-click the "CLICK ME!" button
+local function autoClaimEmote()
+    for _, gui in ipairs(playerGui:GetChildren()) do
+        if gui:IsA("ScreenGui") or gui:IsA("BillboardGui") then  -- Check common GUI types
+            for _, child in ipairs(gui:GetDescendants()) do
+                if child:IsA("TextButton") and child.Text:lower():match("click me!") then
+                    -- Found the button; simulate a click
+                    if child.MouseButton1Click then
+                        child.MouseButton1Click:Fire()
+                    elseif child.Activated then
+                        child.Activated:Fire()
+                    end
+                    print("Auto-claimed emote via button: " .. child.Name)
+                    return true  -- Stop after claiming to avoid multiple triggers
+                end
+            end
+        end
+    end
+    return false
+end
+
+-- Run a loop to check periodically (e.g., every 1 second)
+while true do
+    autoClaimEmote()
+    wait(1)  -- Adjust delay as needed; lower for faster detection, but don't spam
+end
