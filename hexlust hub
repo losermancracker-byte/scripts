@@ -1,0 +1,772 @@
+-- Fixed & Clean WindUI Load (NO REQUIRE ERROR)
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+
+WindUI:SetNotificationLower(true)
+
+-- Blood Red Gradient Theme (like in the original)
+local gradient = WindUI:Gradient({
+    ['0'] = { Color = Color3.fromHex('#200000'), Transparency = 0.5 },
+    ['100'] = { Color = Color3.fromHex('#0d0000'), Transparency = 0.5 },
+}, { Rotation = 0 })
+
+WindUI:AddTheme({
+    Name = "BloodShadow",
+    Accent = gradient,
+    Background = Color3.fromHex('#0a0000'),
+    Button = Color3.fromHex('#4d0000'),
+    Hover = Color3.fromHex('#660000'),
+    Active = Color3.fromHex('#990000'),
+    Outline = Color3.fromHex('#3a0a0a'),
+    Border = Color3.fromHex('#330000'),
+    Text = Color3.fromHex('#ffcccc'),
+    Placeholder = Color3.fromHex('#990000'),
+    Icon = Color3.fromHex('#b30000'),
+    ScrollBar = Color3.fromHex('#2e0000'),
+    Dialog = Color3.fromHex('#120000'),
+})
+
+-- Fancy Gradient Title (Hexlust Hub in red gradient)
+local function GradientText(text)
+    local startColor = Color3.fromHex('#a00e0e')
+    local endColor = Color3.fromHex('#490303')
+    local output = ""
+    for i = 1, #text do
+        local progress = (i - 1) / (#text - 1)
+        local r = math.floor((startColor.R + (endColor.R - startColor.R) * progress) * 255)
+        local g = math.floor((startColor.G + (endColor.G - startColor.G) * progress) * 255)
+        local b = math.floor((startColor.B + (endColor.B - startColor.B) * progress) * 255)
+        output = output .. string.format('<font color="rgb(%d,%d,%d)">%s</font>', r, g, b, text:sub(i,i))
+    end
+    return output
+end
+
+-- Optional Popup (like original)
+WindUI:Popup({
+    Title = GradientText("Hexlust Hub"),
+    Content = "Welcome back! Enjoy the hub.",
+    Icon = "lucide:zap",
+    Buttons = {
+        { Title = "Let's Go!", Variant = "Primary", Icon = "lucide:rocket" }
+    }
+})
+
+-- Create Main Window
+local Window = WindUI:CreateWindow({
+    Title = "Hexlust Hub",
+    Icon = ('rbxassetid://81991054282907'),
+    Transparent = true,
+    Author = "by xenlover",
+    Folder = "HexlustHub",
+    Theme = "BloodShadow",  -- Use the red theme
+    Size = UDim2.fromOffset(550, 450),
+    MinSize = Vector2.new(550, 450),
+    MaxSize = Vector2.new(850, 560),
+    SideBarWidth = 200,
+    HideSearchBar = false,
+    ScrollBarEnabled = true,
+    Resizable = true,
+
+
+    User = {
+        Enabled = true,
+        Anonymous = false,
+        Callback = function()
+            WindUI:Notify({Title = "Hey!", Content = "That's you Nigger!", Duration = 3})
+        end
+    }
+})
+
+-- NOW ADD YOUR TABS HERE
+
+-- Example: Kiba V4 Tab
+local KibaTab = Window:Tab({
+    Title = "Kiba V4",
+    Icon = "zap",
+})
+
+local Button = KibaTab:Button({
+    Title = "Kiba By Xenlover",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        -- code
+
+
+local v1 = game:GetService("Players")
+game:GetService("TweenService")
+game:GetService("RunService")
+local vu2 = v1.LocalPlayer
+local vu3 = vu2.Character or vu2.CharacterAdded:Wait()
+local v4 = vu3
+local vu5 = vu3.WaitForChild(v4, "Humanoid")
+local v6 = vu3
+local vu7 = vu3.WaitForChild(v6, "HumanoidRootPart")
+local vu8 = {
+    ["10503381238"] = true,
+    ["13379003796"] = true
+}
+local vu9 = {
+    ["10479335397"] = true,
+    ["13380255751"] = true
+}
+local vu10 = nil
+local vu11 = nil
+local vu12 = nil
+local vu13 = nil
+local vu14 = false
+local vu15 = 10
+local vu16 = false
+local vu17 = Instance.new("ScreenGui", vu2:WaitForChild("PlayerGui"))
+vu17.Name = "AutoFollowToggle"
+vu17.ResetOnSpawn = false
+local vu18 = Instance.new("TextButton")
+vu18.Size = UDim2.new(0, 100, 0, 20)
+vu18.Position = UDim2.new(0, 100, 0, 50)
+vu18.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+vu18.Text = "Kiba Tech V3 made by xen: OFF"
+vu18.TextColor3 = Color3.fromRGB(255, 255, 255)
+vu18.Font = Enum.Font.GothamBold
+vu18.TextScaled = true
+vu18.Active = true
+vu18.Draggable = true
+vu18.Parent = vu17
+Instance.new("UICorner", vu18).CornerRadius = UDim.new(0, 12)
+local v19 = Instance.new("UIGradient", vu18)
+v19.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(255, 127, 0)),
+    ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 255, 0)),
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 0, 255)),
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(148, 0, 211)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+})
+v19.Rotation = 10
+local vu20 = Instance.new("UIStroke", vu18)
+vu20.Thickness = 1
+
+-- New No Cooldown Toggle Button
+local vu_noCooldown = false
+local vu18_noCooldown = Instance.new("TextButton")
+vu18_noCooldown.Size = UDim2.new(0, 100, 0, 20)
+vu18_noCooldown.Position = UDim2.new(0, 100, 0, 75)  -- Directly below the first button
+vu18_noCooldown.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+vu18_noCooldown.Text = "No Cooldown: OFF"
+vu18_noCooldown.TextColor3 = Color3.fromRGB(255, 255, 255)
+vu18_noCooldown.Font = Enum.Font.GothamBold
+vu18_noCooldown.TextScaled = true
+vu18_noCooldown.Active = true
+vu18_noCooldown.Draggable = true
+vu18_noCooldown.Parent = vu17
+Instance.new("UICorner", vu18_noCooldown).CornerRadius = UDim.new(0, 12)
+local v19_no = Instance.new("UIGradient", vu18_noCooldown)
+v19_no.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(255, 127, 0)),
+    ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 255, 0)),
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 0, 255)),
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(148, 0, 211)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+})
+v19_no.Rotation = 10
+local vu20_no = Instance.new("UIStroke", vu18_noCooldown)
+vu20_no.Thickness = 1
+
+local vu21 = game:GetService("Players")
+local vu22 = game:GetService("TweenService")
+local vu23 = game:GetService("RunService")
+task.spawn(function()
+    local v24 = 0
+    while task.wait(0.15) do
+        v24 = (v24 + 1) % 360
+        vu20.Color = Color3.fromHSV(v24 / 360, 1, 1)
+        vu20_no.Color = Color3.fromHSV(v24 / 360, 1, 1)
+    end
+end)
+local function vu34(p25)
+    vu16 = true
+    local vu26 = Instance.new("Frame")
+    vu26.Size = UDim2.new(0, 180, 0, 18)
+    vu26.Position = UDim2.new(0.5, - 90, 0.4, 80)
+    vu26.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    vu26.Transparency = 0.42
+    vu26.BorderSizePixel = 0
+    vu26.Parent = vu17
+    Instance.new("UICorner", vu26).CornerRadius = UDim.new(0, 10)
+    local v27 = Instance.new("Frame")
+    v27.Size = UDim2.new(0, 0, 1, 0)
+    v27.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    v27.BorderSizePixel = 0
+    v27.Parent = vu26
+    Instance.new("UICorner", v27).CornerRadius = UDim.new(0, 10)
+    local v28 = Instance.new("TextLabel")
+    v28.Size = UDim2.new(1, 0, 1, 0)
+    v28.BackgroundTransparency = 0.42
+    v28.Text = "Kiba Tech V3..."
+    v28.TextColor3 = Color3.new(1, 1, 1)
+    v28.Font = Enum.Font.GothamBold
+    v28.TextScaled = true
+    v28.Parent = vu26
+    local vu33 = Instance.new("ParticleEmitter")
+    vu33.Texture = "rbxassetid://243660364"
+    vu33.Rate = 6
+    vu33.Lifetime = NumberRange.new(1.2, 1.6)
+    vu33.Speed = NumberRange.new(0, 0)
+    vu33.Rotation = NumberRange.new(0, 360)
+    vu33.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 2),
+        NumberSequenceKeypoint.new(0.5, 6),
+        NumberSequenceKeypoint.new(1, 10)
+    })
+    vu33.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.3),
+        NumberSequenceKeypoint.new(1, 1)
+    })
+    vu33.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 255))
+    })
+    vu33.LightEmission = 0.6
+    vu33.Parent = vu7
+    vu22:Create(v27, TweenInfo.new(p25, Enum.EasingStyle.Linear), {
+        Size = UDim2.new(1, 0, 1, 0)
+    }):Play()
+    task.delay(p25, function()
+        vu16 = false
+        vu26:Destroy()
+        if vu33 then
+            vu33:Destroy()
+        end
+    end)
+end
+local function vu40()
+    if vu10 then
+        vu10:Destroy()
+    end
+    if vu11 then
+        vu11:Destroy()
+    end
+    if vu12 then
+        vu12:Disconnect()
+    end
+    if vu13 then
+        vu13:Destroy()
+    end
+    local v35 = vu7
+    local v36, v37, v38 = ipairs(v35:GetChildren())
+    while true do
+        local v39
+        v38, v39 = v36(v37, v38)
+        if v38 == nil then
+            break
+        end
+        if v39:IsA("Attachment") or v39.Name == "HasSnapped" then
+            v39:Destroy()
+        end
+    end
+end
+local function vu48(pu41)
+    vu40()
+    vu13 = Instance.new("Part")
+    vu13.Size = Vector3.new(0.5, 0.5, 0.5)
+    vu13.Transparency = 1
+    vu13.Anchored = true
+    vu13.CanCollide = false
+    vu13.Name = "FollowPart"
+    vu13.Parent = workspace
+    local v42 = Instance.new("Attachment", vu7)
+    local v43 = Instance.new("Attachment", vu13)
+    local v44 = Instance.new("Attachment", vu7)
+    local v45 = Instance.new("Attachment", vu13)
+    vu10 = Instance.new("AlignPosition")
+    vu10.Attachment0 = v42
+    vu10.Attachment1 = v43
+    vu10.RigidityEnabled = true
+    vu10.Responsiveness = 200
+    vu10.MaxForce = math.huge
+    vu10.Parent = vu7
+    vu11 = Instance.new("AlignOrientation")
+    vu11.Attachment0 = v44
+    vu11.Attachment1 = v45
+    vu11.RigidityEnabled = true
+    vu11.Responsiveness = 100
+    vu11.MaxTorque = math.huge
+    vu11.Parent = vu7
+    vu12 = vu23.RenderStepped:Connect(function()
+        if pu41 and pu41.Parent then
+            local v46 = pu41.CFrame * CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(55), 0, 0)
+            vu13.CFrame = v46
+            if not vu7:FindFirstChild("HasSnapped") then
+                vu7.CFrame = v46
+                local v47 = Instance.new("BoolValue")
+                v47.Name = "HasSnapped"
+                v47.Parent = vu7
+            end
+        end
+    end)
+end
+local function vu58()
+    local v49 = vu15
+    local v50, v51, v52 = pairs(workspace.Live:GetChildren())
+    local v53 = nil
+    while true do
+        local v54
+        v52, v54 = v50(v51, v52)
+        if v52 == nil then
+            break
+        end
+        if v54:IsA("Model") and v54 ~= vu3 then
+            local v55 = v54:FindFirstChild("HumanoidRootPart")
+            local v56 = v54:FindFirstChildOfClass("Humanoid")
+            if v55 and (v56 and v56.Health > 0) then
+                local v57 = (v55.Position - vu7.Position).Magnitude
+                if v57 <= v49 then
+                    if v54.Name == "Weakest Dummy" then
+                        v53 = v55
+                        v49 = v57
+                    elseif vu21:GetPlayerFromCharacter(v54) then
+                        v53 = v55
+                        v49 = v57
+                    end
+                end
+            end
+        end
+    end
+    return v53
+end
+local function vu63(p59)
+    if vu14 and (vu_noCooldown or not vu16) then  -- Cooldown bypassed if No Cooldown is ON
+        local v60 = string.match(p59.Animation.AnimationId, "%d+")
+        if vu9[v60] then
+            vu16 = true
+            task.delay(0.8, function()
+                vu34(4.6)
+            end)
+        elseif vu8[v60] then
+            vu16 = true
+            task.delay(0.32, function()
+                local vu61 = {
+                    {
+                        Dash = Enum.KeyCode.W,
+                        Key = Enum.KeyCode.Q,
+                        Goal = "KeyPress"
+                    }
+                }
+                pcall(function()
+                    vu2.Character:WaitForChild("Communicate"):FireServer(unpack(vu61))
+                end)
+                local v62 = vu58()
+                if v62 then
+                    vu48(v62)
+                    task.delay(0.5, vu40)
+                end
+            end)
+            task.delay(0.8, function()
+                vu34(4.6)
+            end)
+        end
+    end
+end
+local function vu64()
+    vu3 = vu2.Character or vu2.CharacterAdded:Wait()
+    vu5 = vu3:WaitForChild("Humanoid")
+    vu7 = vu3:WaitForChild("HumanoidRootPart")
+    vu5.AnimationPlayed:Connect(vu63)
+end
+vu64()
+vu2.CharacterAdded:Connect(function()
+    task.wait(0.1)
+    vu64()
+end)
+vu18.MouseButton1Click:Connect(function()
+    vu14 = not vu14
+    vu18.Text = vu14 and "Kiba Tech V3 made by xen: ON" or "Kiba Tech V3 made by xen: OFF"
+end)
+
+-- No Cooldown Toggle Click
+vu18_noCooldown.MouseButton1Click:Connect(function()
+    vu_noCooldown = not vu_noCooldown
+    vu18_noCooldown.Text = vu_noCooldown and "No Cooldown: ON" or "No Cooldown: OFF"
+end)
+    end
+})
+
+local HeadlessTab = Window:Tab({
+    Title = "Headless/Korblox",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+local Button = HeadlessTab:Button({
+    Title = "Headless/Korblox",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        --[[
+WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+local v1 = game:GetService("Players")
+game:GetService("ReplicatedStorage")
+game:GetService("RunService")
+local vu2 = game:GetService("StarterGui")
+local vu3 = v1.LocalPlayer;
+local vu4 = "101851696"
+local vu5 = "101851254"
+local vu6 = "134082579"
+local vu7 = "134082627"
+
+local function v15()
+    local v8 = vu3.Character
+    if v8 then
+        local v9 = v8:FindFirstChild("Right Leg") or v8:FindFirstChild("RightLowerLeg")
+        if v9 then
+            local v10, v11, v12 = pairs(v9:GetChildren())
+            while true do
+                local v13
+                v12, v13 = v10(v11, v12)
+                if v12 == nil then
+                    break
+                end
+                if v13:IsA("SpecialMesh") then
+                    v13:Destroy()
+                end
+            end
+            local v14 = Instance.new("SpecialMesh")
+            v14.MeshType = Enum.MeshType.FileMesh
+            v14.MeshId = "rbxassetid://" .. vu4
+            v14.TextureId = "rbxassetid://" .. vu5
+            v14.Scale = Vector3.new(1, 1, 1)
+            v14.Offset = Vector3.new(0, 0, 0)
+            v14.Parent = v9
+            v9.Transparency = 0.1
+            v9.BrickColor = BrickColor.new("Really black")
+            v9.Material = Enum.Material.Plastic
+        end
+    end
+end
+
+local function v29()
+    local v16 = vu3.Character
+    if v16 then
+        local v17 = v16:FindFirstChild("Head")
+        if v17 then
+            local v18, v19, v20 = pairs(v17:GetChildren())
+            while true do
+                local v21
+                v20, v21 = v18(v19, v20)
+                if v20 == nil then
+                    break
+                end
+                if v21:IsA("Decal") or v21:IsA("SpecialMesh") then
+                    v21:Destroy()
+                end
+            end
+            local v22 = Instance.new("SpecialMesh")
+            v22.MeshType = Enum.MeshType.FileMesh
+            v22.MeshId = "rbxassetid://" .. vu6
+            v22.TextureId = "rbxassetid://" .. vu7
+            v22.Scale = Vector3.new(1.25, 1.25, 1.25)
+            v22.Offset = Vector3.new(0, 0, 0)
+            v22.Parent = v17
+            v17.Transparency = 0.1
+            v17.BrickColor = BrickColor.new("Really black")
+            v17.Material = Enum.Material.Plastic
+            local v23, v24, v25 = pairs(v16:GetChildren())
+            while true do
+                local v26
+                v25, v26 = v23(v24, v25)
+                if v25 == nil then
+                    break
+                end
+                if v26:IsA("Accessory") then
+                    local v27 = v26:FindFirstChild("Handle")
+                    if v27 then
+                        local v28 = v27:FindFirstChildOfClass("Attachment")
+                        if v28 and (v28.Name:lower():find("hair") or v28.Name:lower():find("hat") or v28.Name:lower():find("face")) then
+                            v26:Destroy()
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function v36()
+    local v30 = vu3.Character
+    if v30 then
+        local v31 = v30:FindFirstChild("Right Leg") or v30:FindFirstChild("RightLowerLeg")
+        if v31 then
+            local v32 = v30:FindFirstChild("FakeKorbloxLeg")
+            if v32 then
+                v32:Destroy()
+            end
+            local v33 = Instance.new("Part")
+            v33.Name = "FakeKorbloxLeg"
+            v33.Size = v31.Size
+            v33.CFrame = v31.CFrame
+            v33.Anchored = false
+            v33.CanCollide = false
+            v33.Transparency = 0
+            v33.BrickColor = BrickColor.new("Really black")
+            v33.Material = Enum.Material.Plastic
+            local v34 = Instance.new("SpecialMesh")
+            v34.MeshType = Enum.MeshType.FileMesh
+            v34.MeshId = "rbxassetid://" .. vu4
+            v34.TextureId = "rbxassetid://" .. vu5
+            v34.Scale = Vector3.new(1, 1, 1)
+            v34.Offset = Vector3.new(0, 0, 0)
+            v34.Parent = v33
+            v33.Parent = v30
+            local v35 = Instance.new("WeldConstraint")
+            v35.Part0 = v31
+            v35.Part1 = v33
+            v35.Parent = v31
+            v31.Transparency = 1
+            v33.CFrame = v31.CFrame
+        end
+    end
+end
+
+local function runScript()
+    local char = vu3.Character
+    if not char then return end
+    
+    -- Wait for Head specifically, then wait an extra second before applying headless
+    local head = char:WaitForChild("Head", 5)
+    if head then
+        wait(0.3)  -- Extra 1 second delay after Head loads
+        v29()    -- Apply fake headless
+    end
+    
+    -- Korblox parts (apply as soon as leg exists, no extra wait needed)
+    local rightLeg = char:FindFirstChild("Right Leg") or char:FindFirstChild("RightLowerLeg")
+    if rightLeg then
+        v15()
+        v36()
+    end
+end
+
+-- Run immediately if already in game
+if vu3.Character then
+    runScript()
+end
+
+-- Run every respawn
+vu3.CharacterAdded:Connect(function(character)
+    vu3.Character = character
+    
+    -- Wait for character to start loading
+    character:WaitForChild("HumanoidRootPart", 10)
+    runScript()
+    
+    -- Safety net: if Head loads late, still apply with the extra second wait
+    character.ChildAdded:Connect(function(child)
+        if child.Name == "Head" then
+            wait(0.3)
+            v29()
+        end
+    end)
+end)
+    end
+})
+
+local AntiFlingTab = Window:Tab({
+    Title = "Anti-Fling",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+local Button = AntiFlingTab:Button({
+    Title = "AntiFling",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        --[[
+	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local localPlayer = Players.LocalPlayer
+local trackedPlayers = {}
+
+local function disableCanCollide(part)
+    if part:IsA("BasePart") and part.CanCollide then
+        part.CanCollide = false
+    end
+end
+
+local function trackCharacter(character)
+    -- Track all current parts for immediate effect
+    for _, part in pairs(character:GetChildren()) do
+        disableCanCollide(part)
+    end
+    -- Also track new parts added later
+    character.ChildAdded:Connect(function(child)
+        disableCanCollide(child)
+    end)
+end
+
+local function trackPlayer(player)
+    if player == localPlayer then return end
+    if player.Character then
+        trackCharacter(player.Character)
+    end
+    player.CharacterAdded:Connect(trackCharacter)
+    trackedPlayers[player] = true
+end
+
+-- Initial setup for existing players
+for _, player in pairs(Players:GetPlayers()) do
+    trackPlayer(player)
+end
+
+-- Listen for new players
+Players.PlayerAdded:Connect(trackPlayer)
+
+-- Continuously force disabling CanCollide on all tracked players' characters every frame
+RunService.RenderStepped:Connect(function()
+    for player, _ in pairs(trackedPlayers) do
+        local character = player.Character
+        if character then
+            for _, part in pairs(character:GetChildren()) do
+                disableCanCollide(part)
+            end
+        end
+    end
+end)
+    end
+})
+
+local QuizTab = Window:Tab({
+    Title = "Quiz Chat Minigame",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+local Button = QuizTab:Button({
+    Title = "Quiz Minigame Chat Loader",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Damian-11/quizbot/master/quizbot.luau"))()
+    end
+})
+
+local DeathCounterTab = Window:Tab({
+    Title = "Death Counter Esp",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+local Button = DeathCounterTab:Button({
+    Title = "Death Counter Esp",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/deathcounteresp"))()
+    end
+})
+
+local DashTab = Window:Tab({
+    Title = "Auto Slide Dash",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+local Button = DashTab:Button({
+    Title = "Slide Dash Script",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/54d6b993fe3a4c1f5c3e375eba35e5ec.lua"))()
+    end
+})
+
+local EmoteTab = Window:Tab({
+    Title = "Auto Claim Emote",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+local Button = EmoteTab:Button({
+    Title = "Auto Claim Emotes Script",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/auto%20claim%20emotes", true))()
+    end
+})
+
+local Paragraph = EmoteTab:Paragraph({
+    Title = "This script is a work in progress..",
+    Desc = "Send feedback via discord.",
+    Color = "Red",
+    Image = "",
+    ImageSize = 30,
+    Thumbnail = "",
+    ThumbnailSize = 80,
+    Locked = false,
+    Buttons = {
+    }
+})
+
+
+local FlingTab = Window:Tab({
+    Title = "Ultimate Fling Gui",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+local Button = FlingTab:Button({
+    Title = "Ultimate Fling Gui Script",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/K1LAS1K/Ultimate-Fling-GUI/main/flingscript.lua"))()
+    end
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ --make tabs above ^
+
+ Window:Tag({
+    Title = "v1",
+    Icon = "square-stack",
+    Color = Color3.fromHex("#FF2B00"),
+    Radius = 10, -- from 0 to 13
+})
+
+local KeybindTab = Window:Tab({
+    Title = "Misc",
+    Icon = "bird", -- optional
+    Locked = false,
+})
+
+local Keybind = KeybindTab:Keybind({
+    Title = "Keybind",
+    Desc = "Keybind to open ui",
+    Value = "LeftControl",
+    Callback = function(v)
+        Window:SetToggleKey(Enum.KeyCode[v])
+    end
+})
+
