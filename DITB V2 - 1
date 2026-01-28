@@ -1,0 +1,100 @@
+local GroupService = game:GetService("GroupService")
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+--          Show group join prompt FIRST (client-side friendly)
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+local GROUP_ID = 982908848
+
+local success, result = pcall(function()
+    return GroupService:PromptJoinAsync(GROUP_ID)
+end)
+
+if success then
+    if result == Enum.GroupMembershipStatus.Joined then
+        print("Player just joined the group!")
+    elseif result == Enum.GroupMembershipStatus.JoinRequestPending then
+        print("Join request sent")
+    elseif result == Enum.GroupMembershipStatus.AlreadyMember then
+        print("Already a member")
+    else
+        print("Did not join or not eligible")
+    end
+else
+    warn("Group prompt failed: ", result)
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+--                     Original script starts here
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--// Configuration
+local GROUP_ID = 982908848          -- ← Your group ID
+local KICK_MESSAGE = "You must be in our group to execute this sorry twin!"
+local CHECK_INTERVAL = 30            -- Seconds between re-checks (fresh, uncached)
+
+--// Services
+local Players = game:GetService("Players")
+local GroupService = game:GetService("GroupService")
+
+--// Fresh (uncached) group check - detects leaves INSTANTLY
+local function checkGroup(player)
+    local success, groups = pcall(function()
+        return GroupService:GetGroupsAsync(player.UserId)
+    end)
+    
+    if not success then
+        warn("Fresh group check failed for " .. player.Name .. " - API error")
+        return false  -- Kick on API fail (safe default)
+    end
+    
+    for _, groupInfo in ipairs(groups) do
+        if groupInfo.Id == GROUP_ID then
+            return true
+        end
+    end
+    
+    return false
+end
+
+--// Verify player ONCE: check + load hub if good
+local function verifyPlayer(player)
+    if checkGroup(player) then
+        print("Hello world - " .. player.Name .. " is in the group!")
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/DITB%20V2"))()
+        return true
+    else
+        player:Kick(KICK_MESSAGE)
+        return false
+    end
+end
+
+--// Monitor loop: re-check every X seconds, kick if left group
+local function monitorPlayer(player)
+    while player.Parent do
+        task.wait(CHECK_INTERVAL)
+        if player.Parent and not checkGroup(player) then
+            warn(player.Name .. " was kicked - left group " .. GROUP_ID)
+            player:Kick(KICK_MESSAGE)
+            break
+        end
+    end
+end
+
+--// New players
+Players.PlayerAdded:Connect(function(player)
+    task.wait(1.5)  -- Wait for reliable initial check
+    
+    if verifyPlayer(player) then
+        task.spawn(monitorPlayer, player)
+    end
+end)
+
+--// Existing players (when script loads)
+for _, player in Players:GetPlayers() do
+    task.spawn(function()
+        task.wait(2)  -- Slightly longer for existing
+        if verifyPlayer(player) then
+            task.spawn(monitorPlayer, player)
+        end
+    end)
+end
