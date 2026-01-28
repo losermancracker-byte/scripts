@@ -1,5 +1,5 @@
 --// Configuration
-local GROUP_ID = 1064339704          -- ← Your group ID
+local GROUP_ID = 982908848          -- ← Your group ID
 local KICK_MESSAGE = "You must be in our group to execute this sorry twin!"
 local CHECK_INTERVAL = 30            -- Seconds between re-checks (fresh, uncached)
 
