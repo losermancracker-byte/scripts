@@ -43,7 +43,7 @@ do
 				bringPlr(scraps:GetPivot())
 				--print(`Brought {LocalPlayer.Name} to scrap`)
 				collect(scraps)
-				task.wait(10)  -- Wait at least 10 seconds before teleporting to the next scrap
+				task.wait(14)  -- Wait at least 10 seconds before teleporting to the next scrap
 			end
 			task.wait(0.2)
 		end
