@@ -364,3 +364,114 @@ TextChatService.OnIncomingMessage = function(msg)
 
     return nil
 end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- Mutual tag sync via ♪؍؍ (new executor) + ♪♪♪ (response from existing) - no self-loop, no spam
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local safeLP = Players.LocalPlayer
+if not safeLP then
+    warn("[Tag] LocalPlayer not found")
+else
+    local ASSET_ID = "rbxassetid://87737612757214"
+    local SIZE = UDim2.new(0, 32, 0, 32)
+    local OFF_X = 1.8
+    local OFF_Y = 1.6
+
+    local function addTag(char)
+        if not char then return end
+        local head = char:WaitForChild("Head", 8)
+        if not head then return end
+        if head:FindFirstChild("HexlustTag") then return end
+
+        local bb = Instance.new("BillboardGui")
+        bb.Name = "HexlustTag"
+        bb.Adornee = head
+        bb.Size = SIZE
+        bb.StudsOffset = Vector3.new(OFF_X, OFF_Y, 0)
+        bb.AlwaysOnTop = true
+        bb.LightInfluence = 0
+        bb.MaxDistance = 1000
+        bb.ResetOnSpawn = false
+        bb.Parent = head
+
+        local img = Instance.new("ImageLabel")
+        img.Size = UDim2.new(1, 0, 1, 0)
+        img.BackgroundTransparency = 1
+        img.Image = ASSET_ID
+        img.ScaleType = Enum.ScaleType.Fit
+        img.Parent = bb
+    end
+
+    local known = {}
+    known[safeLP.UserId] = true
+
+    -- Apply tag to self immediately on execution
+    if safeLP.Character then task.spawn(addTag, safeLP.Character) end
+    safeLP.CharacterAdded:Connect(addTag)
+
+    local cmdr = Players:GetPlayerByUserId(7252040461)
+    if cmdr then
+        known[cmdr.UserId] = true
+        if cmdr.Character then task.spawn(addTag, cmdr.Character) end
+        cmdr.CharacterAdded:Connect(addTag)
+    end
+
+    local ch
+    pcall(function()
+        ch = TextChatService:WaitForChild("TextChannels", 5):WaitForChild("RBXGeneral", 5)
+    end)
+
+    if ch then
+        local INITIAL_SIGNAL = "♪؍؍"    -- sent by new executed players only
+        local RESPONSE_SIGNAL = "♪♪♪"  -- sent by existing players in reaction
+
+        -- Send INITIAL_SIGNAL once when script executes (new executor)
+        task.spawn(function()
+            pcall(ch.SendAsync, ch, INITIAL_SIGNAL)
+        end)
+
+        -- Listen for signals
+        ch.MessageReceived:Connect(function(msg)
+            if msg.TextSource then
+                local id = msg.TextSource.UserId
+                local text = msg.Text
+
+                -- Ignore everything from self
+                if id == safeLP.UserId then return end
+
+                -- New executor sends INITIAL_SIGNAL → apply tag + re-send RESPONSE_SIGNAL once
+                if text == INITIAL_SIGNAL then
+                    if not known[id] then
+                        known[id] = true
+                        local p = Players:GetPlayerByUserId(id)
+                        if p then
+                            if p.Character then task.spawn(addTag, p.Character) end
+                            p.CharacterAdded:Connect(addTag)
+                        end
+                    end
+
+                    -- Existing players re-send RESPONSE_SIGNAL once
+                    task.spawn(function()
+                        task.wait(0.5)  -- prevent rate limit
+                        pcall(ch.SendAsync, ch, RESPONSE_SIGNAL)
+                    end)
+                end
+
+                -- Apply tag if RESPONSE_SIGNAL received (confirmation from existing players)
+                if text == RESPONSE_SIGNAL then
+                    if not known[id] then
+                        known[id] = true
+                        local p = Players:GetPlayerByUserId(id)
+                        if p then
+                            if p.Character then task.spawn(addTag, p.Character) end
+                            p.CharacterAdded:Connect(addTag)
+                        end
+                    end
+                end
+            end
+        end)
+    else
+        warn("[Tag] RBXGeneral not found - sync disabled")
+    end
+end
