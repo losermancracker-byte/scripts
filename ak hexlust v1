@@ -394,7 +394,7 @@ else
         bb.StudsOffset = Vector3.new(OFF_X, OFF_Y, 0)
         bb.AlwaysOnTop = true
         bb.LightInfluence = 0
-        bb.MaxDistance = 200
+        bb.MaxDistance = 2000
         bb.ResetOnSpawn = false
         bb.Parent = head
 
