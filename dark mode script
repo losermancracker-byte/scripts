@@ -1,0 +1,45 @@
+-- Dark mode chat bubbles – Attempt modern + safe fallback (2026 reality check)
+do
+    local success, tcs = pcall(function()
+        return game:GetService("TextChatService")
+    end)
+    
+    if not success or not tcs then
+        warn("[Hexlust] TextChatService not loaded – skipping dark bubbles (legacy/custom game)")
+    else
+        -- Safe modern attempt
+        local configSuccess, config = pcall(function()
+            return tcs:WaitForChild("BubbleChatConfiguration", 5)
+        end)
+        
+        if configSuccess and config then
+            config.BackgroundColor3         = Color3.fromRGB(10, 10, 15)
+            config.TextColor3               = Color3.fromRGB(240, 240, 255)
+            config.TextStrokeColor3         = Color3.fromRGB(0, 0, 0)
+            config.TextStrokeTransparency   = 0.5
+            config.BackgroundTransparency   = 0.0
+            config.UICorner                 = UDim.new(0, 12)
+            print("[Hexlust] Modern dark bubbles applied!")
+        else
+            warn("[Hexlust] BubbleChatConfiguration not found – this game uses legacy/custom chat. Dark bubbles not possible client-side.")
+            -- Optional: last-ditch scan (lightweight, may not stick)
+            local function tryStyle(label)
+                if label:IsA("TextLabel") then
+                    label.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
+                    label.TextColor3 = Color3.fromRGB(235, 235, 245)
+                    label.TextStrokeTransparency = 0.7
+                end
+            end
+            
+            workspace.DescendantAdded:Connect(function(obj)
+                if obj:IsA("BillboardGui") then
+                    task.delay(0.3, function()
+                        for _, child in obj:GetDescendants() do
+                            tryStyle(child)
+                        end
+                    end)
+                end
+            end)
+        end
+    end
+end
