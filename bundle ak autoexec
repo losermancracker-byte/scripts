@@ -1,0 +1,23 @@
+-- First, define a cross-exploit wrapper (like IY does)
+local queue_on_teleport = queue_on_teleport 
+    or (syn and syn.queue_on_teleport) 
+    or (fluxus and fluxus.queue_on_teleport) 
+    or (getgenv and getgenv().queue_on_teleport)  -- fallback if aliased
+
+if not queue_on_teleport then
+    warn("Your executor does NOT support queue_on_teleport — auto-exec on teleport won't work!")
+    return
+end
+
+-- Your exact loadstring (the script you want to auto-re-execute)
+local my_script = [[
+loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/bundle%20ak%20hexlust"))()
+]]
+
+-- Queue it to run after EVERY teleport
+queue_on_teleport(my_script)
+
+-- Optional: Also run it immediately right now (if you haven't already)
+loadstring(my_script)()
+
+print("Auto-execute on teleport ENABLED for your script!")
