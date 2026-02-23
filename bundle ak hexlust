@@ -1,0 +1,10 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/warning%20mesg"))()
+
+-- 2. Then execute the main hexlust script
+loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/ak%20hexlust%20v1"))()
+
+
+-- 1. Execute the dark mode script first
+loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/dark%20mode%20script"))()
+
+
