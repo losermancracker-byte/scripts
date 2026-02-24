@@ -20,31 +20,42 @@ local script_to_run = [[
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 --     The delayed wrapper that will be queued
+--     (now includes re-queuing itself at the end!)
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 local delayed_loader = [[
     task.wait(6)                     -- wait 6 seconds after teleport
+
     ]] .. script_to_run .. [[
+
+    -- Re-queue ourselves for the NEXT teleport/rejoin
+    local qot = queue_on_teleport 
+        or (syn and syn.queue_on_teleport) 
+        or (fluxus and fluxus.queue_on_teleport) 
+        or getgenv().queue_on_teleport
+        or (Krnl and Krnl.queue_on_teleport)   
+        or (Sirhurt and Sirhurt.queue_on_teleport)
+    
+    if qot then
+        qot("]] .. delayed_loader:gsub('"', '\\"') .. [[")
+        print("[AutoExec] Re-queued for next teleport")
+    end
+
     print("[AutoExec] Script ran 6 seconds after teleport")
 ]]
 
 -- ────────────────────────────────────────────────
---   Only queue once per actual Roblox launch/session
---   (survives most teleports/rejoins in modern executors)
+--   Register the queue (we do it every time now)
+--   No guard needed — re-queuing handles multiples
 -- ────────────────────────────────────────────────
-if not getgenv()._AUTOEXEC_QUEUE_REGISTERED then
-    queue_on_teleport(delayed_loader)
-    getgenv()._AUTOEXEC_QUEUE_REGISTERED = true
-    print("Auto-execute queue registered (will run on EVERY teleport/rejoin)")
-else
-    print("Queue already registered — skipping duplicate registration")
-end
+queue_on_teleport(delayed_loader)
+print("Auto-execute queue registered (self-re-queuing enabled for multiple rejoins)")
 
 -- Optional: also run it right now (immediately, no delay)
--- Comment out the whole task.spawn block if you only want it after teleports
+-- Comment out if you only want after-teleport execution
 task.spawn(function()
-    task.wait(0.5)   -- tiny delay so it doesn't fight with other scripts
+    task.wait(0.5)   -- tiny delay to avoid conflicts
     loadstring(script_to_run)()
     print("[AutoExec] Initial execution done")
 end)
 
-print("Auto-execute with **6 second delay** after teleport is now ENABLED!")
+print("Auto-execute with **6 second delay** after teleport is now ENABLED! (supports unlimited rejoins)")
