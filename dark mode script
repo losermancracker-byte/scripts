@@ -1,45 +1,164 @@
--- Dark mode chat bubbles – Attempt modern + safe fallback (2026 reality check)
-do
-    local success, tcs = pcall(function()
-        return game:GetService("TextChatService")
+-- Hexlust Dark/Chat Bubble Themer with Commands (Fixed for modern BubbleChatConfiguration)
+-- LocalScript in StarterPlayerScripts or similar
+
+local Players = game:GetService("Players")
+local TextChatService = game:GetService("TextChatService")
+local player = Players.LocalPlayer
+
+-- ────────────────────────────────────────────────
+--  Theme presets (stroke removed for modern path)
+-- ────────────────────────────────────────────────
+local themes = {
+    dark = {  -- default
+        bg  = Color3.fromRGB(10, 10, 15),
+        txt = Color3.fromRGB(240, 240, 255),
+        name = "Dark"
+    },
+    pink = {
+        bg  = Color3.fromRGB(255, 182, 193),   -- light pink
+        txt = Color3.fromRGB(40, 20, 35),      -- dark text
+        name = "Pink"
+    },
+    red = {
+        bg  = Color3.fromRGB(190, 30, 45),
+        txt = Color3.fromRGB(245, 245, 245),   -- light text
+        name = "Red"
+    },
+    green = {
+        bg  = Color3.fromRGB(40, 180, 90),
+        txt = Color3.fromRGB(245, 250, 245),   -- almost white
+        name = "Green"
+    },
+    blue = {
+        bg  = Color3.fromRGB(50, 120, 220),
+        txt = Color3.fromRGB(245, 248, 255),
+        name = "Blue"
+    },
+    purple = {
+        bg  = Color3.fromRGB(140, 70, 190),
+        txt = Color3.fromRGB(245, 240, 255),
+        name = "Purple"
+    }
+}
+
+-- Current theme
+local currentTheme = themes.dark
+
+-- ────────────────────────────────────────────────
+--  Apply to modern BubbleChatConfiguration (2026 compatible)
+-- ────────────────────────────────────────────────
+local function applyModernTheme(theme)
+    local success, config = pcall(function()
+        return TextChatService:WaitForChild("BubbleChatConfiguration", 5)
     end)
     
-    if not success or not tcs then
-        warn("[Hexlust] TextChatService not loaded – skipping dark bubbles (legacy/custom game)")
-    else
-        -- Safe modern attempt
-        local configSuccess, config = pcall(function()
-            return tcs:WaitForChild("BubbleChatConfiguration", 5)
-        end)
-        
-        if configSuccess and config then
-            config.BackgroundColor3         = Color3.fromRGB(10, 10, 15)
-            config.TextColor3               = Color3.fromRGB(240, 240, 255)
-            config.TextStrokeColor3         = Color3.fromRGB(0, 0, 0)
-            config.TextStrokeTransparency   = 0.5
-            config.BackgroundTransparency   = 0.0
-            config.UICorner                 = UDim.new(0, 12)
-            print("[Hexlust] Modern dark bubbles applied!")
-        else
-            warn("[Hexlust] BubbleChatConfiguration not found – this game uses legacy/custom chat. Dark bubbles not possible client-side.")
-            -- Optional: last-ditch scan (lightweight, may not stick)
-            local function tryStyle(label)
-                if label:IsA("TextLabel") then
-                    label.BackgroundColor3 = Color3.fromRGB(15, 15, 18)
-                    label.TextColor3 = Color3.fromRGB(235, 235, 245)
-                    label.TextStrokeTransparency = 0.7
-                end
+    if success and config then
+        config.BackgroundColor3       = theme.bg
+        config.TextColor3             = theme.txt
+        config.BackgroundTransparency = 0
+        -- No TextStrokeColor3 / TextStrokeTransparency properties exist!
+        -- For rounded corners: manually add a UICorner (CornerRadius = UDim.new(0,12)) 
+        -- under TextChatService.BubbleChatConfiguration in Studio (applies globally).
+        print("[Hexlust] Applied " .. theme.name .. " theme to modern bubbles!")
+        return true
+    end
+    return false
+end
+
+-- ────────────────────────────────────────────────
+--  Fallback: style legacy/custom BillboardGui bubbles (supports stroke)
+-- ────────────────────────────────────────────────
+local function styleBubbleLabel(label, theme)
+    if not label:IsA("TextLabel") then return end
+    label.BackgroundColor3       = theme.bg
+    label.TextColor3             = theme.txt
+    label.TextStrokeColor3       = Color3.fromRGB(0, 0, 0)   -- black outline
+    label.TextStrokeTransparency = 0.6                       -- semi-visible stroke
+    label.BackgroundTransparency = 0
+end
+
+local function tryStyleExistingBubbles(theme)
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("BillboardGui") then
+            for _, child in ipairs(obj:GetDescendants()) do
+                styleBubbleLabel(child, theme)
             end
-            
-            workspace.DescendantAdded:Connect(function(obj)
-                if obj:IsA("BillboardGui") then
-                    task.delay(0.3, function()
-                        for _, child in obj:GetDescendants() do
-                            tryStyle(child)
-                        end
-                    end)
-                end
-            end)
         end
     end
 end
+
+local function watchForNewBubbles(theme)
+    workspace.DescendantAdded:Connect(function(obj)
+        if obj:IsA("BillboardGui") then
+            task.delay(0.3, function()
+                for _, child in ipairs(obj:GetDescendants()) do
+                    styleBubbleLabel(child, theme)
+                end
+            end)
+        end
+    end)
+end
+
+-- ────────────────────────────────────────────────
+--  Set theme: try modern first, fallback to legacy
+-- ────────────────────────────────────────────────
+local function setTheme(themeName)
+    local lowerName = themeName:lower()
+    local theme = themes[lowerName]
+    if not theme then
+        warn("[Hexlust] Unknown theme: " .. themeName)
+        return
+    end
+    
+    currentTheme = theme
+    
+    local appliedModern = applyModernTheme(theme)
+    
+    if not appliedModern then
+        warn("[Hexlust] Modern BubbleChatConfiguration not found — using legacy fallback")
+        tryStyleExistingBubbles(theme)
+        
+        -- Connect watcher only once
+        if not getrenv()._hexlust_watcher_connected then
+            watchForNewBubbles(theme)
+            getrenv()._hexlust_watcher_connected = true
+        end
+        print("[Hexlust] Applied " .. theme.name .. " theme (legacy bubbles)")
+    end
+end
+
+-- Apply initial theme
+setTheme("dark")
+
+-- ────────────────────────────────────────────────
+--  Simple local chat commands (!pink, !red, etc.)
+-- ────────────────────────────────────────────────
+local function onChatted(message)
+    local cmd = message:lower():match("^!(%w+)")
+    if not cmd then return end
+    
+    if themes[cmd] then
+        setTheme(cmd)
+    elseif cmd == "reset" or cmd == "dark" then
+        setTheme("dark")
+    end
+end
+
+-- Modern TCS chat listener (preferred)
+if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+    local general = TextChatService:FindFirstChild("TextChannels") and TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+    if general then
+        general.MessageReceived:Connect(function(msg)
+            if msg.TextSource and msg.TextSource.UserId == player.UserId then
+                onChatted(msg.Text)
+            end
+        end)
+    else
+        warn("[Hexlust] RBXGeneral channel not found yet")
+    end
+else
+    -- Legacy fallback
+    player.Chatted:Connect(onChatted)
+end
+
+print("[Hexlust] Bubble themer loaded! Commands: !pink !red !green !blue !purple !dark / !reset")
