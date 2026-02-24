@@ -1,147 +1,41 @@
--- Black Fire Aura (LOWERED to feet level, SLOW, PURE BLACK, lingering void/smoldering)
--- LocalScript in StarterPlayerScripts – Press Q to toggle
+-- Cross-executor queue_on_teleport detection (same as yours)
+local queue_on_teleport = queue_on_teleport 
+    or (syn and syn.queue_on_teleport) 
+    or (fluxus and fluxus.queue_on_teleport) 
+    or (getgenv and getgenv().queue_on_teleport)
+    or (Krnl and Krnl.queue_on_teleport)   -- some others
+    or (Sirhurt and Sirhurt.queue_on_teleport)
 
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
--- ────────────────────────────────────────────────
--- Config – Slow & Pure Black Edition (Low Aura)
--- ────────────────────────────────────────────────
-local AURA_ENABLED = false
-local TOGGLE_KEY = Enum.KeyCode.Q
-
-local FIRE_TEXTURE = "rbxasset://textures/particles/fire_main.dds"  -- Classic Roblox flame shape
-
--- ────────────────────────────────────────────────
--- Attachment (lowered to feet, backward trail)
--- ────────────────────────────────────────────────
-local attachment = Instance.new("Attachment")
-attachment.Name = "LowBlackAuraAttachment"
-attachment.Position = Vector3.new(0, -2.9, -0.4)  -- LOW: near feet + slight back offset
-attachment.Orientation = Vector3.new(0, 180, 0)   -- Emit BEHIND player
-attachment.Parent = humanoidRootPart
-
--- ────────────────────────────────────────────────
--- EMITTER 1: OUTER BLACK FLAMES (wispy, slow edges)
--- ────────────────────────────────────────────────
-local outerFire = Instance.new("ParticleEmitter")
-outerFire.Name = "OuterBlackFlames"
-outerFire.Enabled = false
-outerFire.Texture = FIRE_TEXTURE
-outerFire.Rate = 18
-outerFire.Lifetime = NumberRange.new(2.2, 4.0)
-outerFire.Speed = NumberRange.new(2, 4.5)
-outerFire.SpreadAngle = Vector2.new(30, 30)
-outerFire.Size = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0.3),
-    NumberSequenceKeypoint.new(0.4, 2.8),
-    NumberSequenceKeypoint.new(0.8, 2.0),
-    NumberSequenceKeypoint.new(1, 0)
-})
-outerFire.Transparency = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0.65),
-    NumberSequenceKeypoint.new(0.3, 0.25),
-    NumberSequenceKeypoint.new(0.9, 0.4),
-    NumberSequenceKeypoint.new(1, 1)
-})
-outerFire.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(18, 18, 20)),
-    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(8, 8, 10)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-})
-outerFire.LightEmission = 0.85
-outerFire.LightInfluence = 0
-outerFire.Acceleration = Vector3.new(0, 12, 0)
-outerFire.Rotation = NumberRange.new(-25, 25)
-outerFire.RotSpeed = NumberRange.new(30, 80)
-outerFire.VelocityInheritance = 0.35
-
-outerFire.Shape = Enum.ParticleEmitterShape.Cylinder
-outerFire.ShapeStyle = Enum.ParticleEmitterShapeStyle.Volume
-outerFire.ShapeInOut = Enum.ParticleEmitterShapeInOut.Outward
-outerFire.ShapePartial = 0.93
-
-outerFire.Parent = attachment
-
--- ────────────────────────────────────────────────
--- EMITTER 2: INNER CORE (deeper black, slower glow)
--- ────────────────────────────────────────────────
-local innerFire = Instance.new("ParticleEmitter")
-innerFire.Name = "InnerBlackCore"
-innerFire.Enabled = false
-innerFire.Texture = FIRE_TEXTURE
-innerFire.Rate = 12
-innerFire.Lifetime = NumberRange.new(2.8, 5.0)
-innerFire.Speed = NumberRange.new(1.8, 3.8)
-innerFire.SpreadAngle = Vector2.new(18, 18)
-innerFire.Size = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0.15),
-    NumberSequenceKeypoint.new(0.5, 1.6),
-    NumberSequenceKeypoint.new(1, 0)
-})
-innerFire.Transparency = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0.7),
-    NumberSequenceKeypoint.new(0.4, 0.15),
-    NumberSequenceKeypoint.new(1, 1)
-})
-innerFire.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(12, 12, 14)),
-    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(4, 4, 6)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
-})
-innerFire.LightEmission = 1.0
-innerFire.LightInfluence = 0
-innerFire.Acceleration = Vector3.new(0, 15, 0)
-innerFire.Rotation = NumberRange.new(-20, 20)
-innerFire.RotSpeed = NumberRange.new(40, 100)
-innerFire.VelocityInheritance = 0.4
-
-innerFire.Shape = Enum.ParticleEmitterShape.Cylinder
-innerFire.ShapeStyle = Enum.ParticleEmitterShapeStyle.Volume
-innerFire.ShapeInOut = Enum.ParticleEmitterShapeInOut.Outward
-innerFire.ShapePartial = 0.96
-
-innerFire.Parent = attachment
-
--- ────────────────────────────────────────────────
--- Toggle
--- ────────────────────────────────────────────────
-local function toggleAura()
-    AURA_ENABLED = not AURA_ENABLED
-    outerFire.Enabled = AURA_ENABLED
-    innerFire.Enabled = AURA_ENABLED
-    
-    if AURA_ENABLED then
-        print("[Aura] 🖤 SLOW PURE BLACK FIRE ACTIVATED – Low to feet, smoldering void trail")
-        outerFire:Emit(12)
-        innerFire:Emit(8)
-    else
-        print("[Aura] Pure black fire aura DEACTIVATED")
-    end
+if not queue_on_teleport then
+    warn("Your executor does NOT support queue_on_teleport — delayed auto-execute won't work!")
+    return
 end
 
--- ────────────────────────────────────────────────
--- Input & Respawn Handling
--- ────────────────────────────────────────────────
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == TOGGLE_KEY then
-        toggleAura()
-    end
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+--     The script you want to run (your real loadstring)
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+local script_to_run = [[
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/bundle%20ak%20hexlust"))()
+]]
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+--     The delayed wrapper that will be queued
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+local delayed_loader = [[
+    task.wait(6)                     -- wait 6 seconds after teleport
+    ]] .. script_to_run .. [[
+    print("[AutoExec] Script ran 6 seconds after teleport")
+]]
+
+-- Queue the **delayed** version — runs once per teleport
+queue_on_teleport(delayed_loader)
+
+-- Optional: also run it right now (immediately, no delay)
+-- You can comment this out if you only want it after teleports
+task.spawn(function()
+    task.wait(0.5)   -- tiny delay so it doesn't fight with other scripts
+    loadstring(script_to_run)()
+    print("[AutoExec] Initial execution done")
 end)
 
-player.CharacterAdded:Connect(function(newChar)
-    character = newChar
-    humanoidRootPart = newChar:WaitForChild("HumanoidRootPart")
-    attachment.Parent = humanoidRootPart
-    outerFire.Parent = attachment
-    innerFire.Parent = attachment
-    outerFire.Enabled = AURA_ENABLED
-    innerFire.Enabled = AURA_ENABLED
-end)
-
-print("[Low Slow Pure Black Fire Aura] Loaded! Press Q to toggle slow, lingering BLACK void fire trail near your feet. 🖤🔥")
+print("Auto-execute with **6 second delay** after teleport is now ENABLED!")
