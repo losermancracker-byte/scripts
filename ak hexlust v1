@@ -1,5 +1,5 @@
 -- LocalScript - Controllable by UserId 7252040461 (Commander)
--- Runs fully on every join / rejoin / teleport - no blocking
+-- Anti-double-execute protection
 
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
@@ -7,8 +7,19 @@ local TweenService = game:GetService("TweenService")
 local TeleportService = game:GetService("TeleportService")
 local LocalPlayer = Players.LocalPlayer
 
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 8)
+
+if PlayerGui:FindFirstChild("HexlustExecuted") then
+    return
+end
+
+local marker = Instance.new("BoolValue")
+marker.Name = "HexlustExecuted"
+marker.Value = true
+marker.Parent = PlayerGui
+
 -- ───────────────────────────────────────────────
--- Core logic - always runs on every execution
+-- Rest of the script
 -- ───────────────────────────────────────────────
 
 -- Dark mode chat bubbles
@@ -57,9 +68,8 @@ do
     applyDarkBubbles()
 end
 
--- Small notification - appears every join/rejoin
+-- Small notification
 do
-    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 10)
     if PlayerGui then
         local ScreenGui = Instance.new("ScreenGui")
         ScreenGui.Name = "HexlustNotify"
@@ -142,14 +152,14 @@ do
     end
 end
 
--- General chat channel - longer timeout for stability after rejoin
+-- General chat channel
 local GeneralChannel
 pcall(function()
-    local TextChannels = TextChatService:WaitForChild("TextChannels", 35)
-    GeneralChannel = TextChannels:WaitForChild("RBXGeneral", 35)
+    local TextChannels = TextChatService:WaitForChild("TextChannels", 20)
+    GeneralChannel = TextChannels:WaitForChild("RBXGeneral", 20)
 end)
 if not GeneralChannel then
-    warn("RBXGeneral not found - chat commands & tag sync may be limited")
+    warn("RBXGeneral not found - chat commands & tag sync disabled")
 end
 
 -- Helpers
@@ -200,10 +210,10 @@ end)
 
 local safeLP = Players.LocalPlayer
 
-local REGULAR_ASSET       = "rbxassetid://87737612757214"
-local OWNER_ASSET         = "rbxassetid://81991054282907"
-local SPECIAL_ASSET_1     = "rbxassetid://76327184604575"
-local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"
+local REGULAR_ASSET       = "rbxassetid://87737612757214"      -- executed members
+local OWNER_ASSET         = "rbxassetid://81991054282907"      -- owner
+local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"      -- special 1
+local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"     -- special 2
 
 local OWNER_USERID        = 7252040461
 local SPECIAL_USERID_1    = 9601915641
@@ -218,7 +228,7 @@ local function addTag(char, userid)
     local head = char:FindFirstChild("Head") or char:WaitForChild("Head")
     if head:FindFirstChild("HexlustTag") then return end
 
-    task.wait(1.5)  -- increased slightly for rejoin stability
+    task.wait(1)
 
     local bb = Instance.new("BillboardGui")
     bb.Name = "HexlustTag"
@@ -243,7 +253,7 @@ local function addTag(char, userid)
     elseif userid == SPECIAL_USERID_2 then
         img.Image = SPECIAL_ASSET_2
     else
-        img.Image = REGULAR_ASSET
+        img.Image = REGULAR_ASSET  -- executed member
     end
 
     img.Parent = bb
@@ -274,13 +284,13 @@ if special1 then tryTagPlayer(special1) end
 local special2 = Players:GetPlayerByUserId(SPECIAL_USERID_2)
 if special2 then tryTagPlayer(special2) end
 
--- Tag sync – both signals trigger correct tag
+-- Tag sync via chat – both signals apply correct tag
 local ch = GeneralChannel
 if ch then
     local INITIAL_SIGNAL  = "♪؍؍"
     local RESPONSE_SIGNAL = "♪♪♪"
 
-    task.delay(7, function()  -- longer delay after rejoin
+    task.delay(4, function()
         pcall(ch.SendAsync, ch, INITIAL_SIGNAL)
     end)
 
@@ -294,7 +304,10 @@ if ch then
         if text == INITIAL_SIGNAL or text == RESPONSE_SIGNAL then
             if not known[id] then
                 local p = Players:GetPlayerByUserId(id)
-                if p then tryTagPlayer(p) end
+                if p then 
+                    -- Use the correct asset based on who they are
+                    tryTagPlayer(p)
+                end
             end
 
             if text == INITIAL_SIGNAL then
