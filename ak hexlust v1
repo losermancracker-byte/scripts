@@ -1,10 +1,29 @@
 -- LocalScript - Controllable by UserId 7252040461 (Commander)
+-- Anti-double-execute protection
 
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 local TweenService = game:GetService("TweenService")
 local TeleportService = game:GetService("TeleportService")
 local LocalPlayer = Players.LocalPlayer
+
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 8)
+
+-- Check if already executed in this session
+if PlayerGui:FindFirstChild("HexlustExecuted") then
+    -- Already running → silently exit (or you can kick/warn if you want)
+    return
+end
+
+-- Mark as executed
+local marker = Instance.new("BoolValue")
+marker.Name = "HexlustExecuted"
+marker.Value = true
+marker.Parent = PlayerGui
+
+-- ───────────────────────────────────────────────
+-- Rest of the script starts here
+-- ───────────────────────────────────────────────
 
 -- Dark mode chat bubbles on execution
 do
@@ -54,10 +73,7 @@ end
 
 -- Small notification
 do
-    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 10)
-    if not PlayerGui then
-        warn("[Hexlust] PlayerGui not found - skipping notification")
-    else
+    if PlayerGui then
         local ScreenGui = Instance.new("ScreenGui")
         ScreenGui.Name = "HexlustNotify"
         ScreenGui.ResetOnSpawn = false
