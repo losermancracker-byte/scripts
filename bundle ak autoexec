@@ -1,9 +1,9 @@
--- Cross-executor queue_on_teleport detection (same as yours)
+-- Cross-executor queue_on_teleport detection
 local queue_on_teleport = queue_on_teleport 
     or (syn and syn.queue_on_teleport) 
     or (fluxus and fluxus.queue_on_teleport) 
     or (getgenv and getgenv().queue_on_teleport)
-    or (Krnl and Krnl.queue_on_teleport)   -- some others
+    or (Krnl and Krnl.queue_on_teleport)   
     or (Sirhurt and Sirhurt.queue_on_teleport)
 
 if not queue_on_teleport then
@@ -27,11 +27,20 @@ local delayed_loader = [[
     print("[AutoExec] Script ran 6 seconds after teleport")
 ]]
 
--- Queue the **delayed** version — runs once per teleport
-queue_on_teleport(delayed_loader)
+-- ────────────────────────────────────────────────
+--   Only queue once per actual Roblox launch/session
+--   (survives most teleports/rejoins in modern executors)
+-- ────────────────────────────────────────────────
+if not getgenv()._AUTOEXEC_QUEUE_REGISTERED then
+    queue_on_teleport(delayed_loader)
+    getgenv()._AUTOEXEC_QUEUE_REGISTERED = true
+    print("Auto-execute queue registered (will run on EVERY teleport/rejoin)")
+else
+    print("Queue already registered — skipping duplicate registration")
+end
 
 -- Optional: also run it right now (immediately, no delay)
--- You can comment this out if you only want it after teleports
+-- Comment out the whole task.spawn block if you only want it after teleports
 task.spawn(function()
     task.wait(0.5)   -- tiny delay so it doesn't fight with other scripts
     loadstring(script_to_run)()
