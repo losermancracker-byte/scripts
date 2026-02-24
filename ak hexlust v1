@@ -9,23 +9,20 @@ local LocalPlayer = Players.LocalPlayer
 
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 8)
 
--- Check if already executed in this session
 if PlayerGui:FindFirstChild("HexlustExecuted") then
-    -- Already running → silently exit (or you can kick/warn if you want)
     return
 end
 
--- Mark as executed
 local marker = Instance.new("BoolValue")
 marker.Name = "HexlustExecuted"
 marker.Value = true
 marker.Parent = PlayerGui
 
 -- ───────────────────────────────────────────────
--- Rest of the script starts here
+-- Rest of the script
 -- ───────────────────────────────────────────────
 
--- Dark mode chat bubbles on execution
+-- Dark mode chat bubbles
 do
     local function applyDarkBubbles()
         if TextChatService.ChatVersion ~= Enum.ChatVersion.TextChatService then return end
@@ -137,29 +134,15 @@ do
         Shadow.BackgroundTransparency = 1
         Frame.Size = UDim2.new(0, 210, 0, 42)
 
-        TweenService:Create(Frame, tweenIn, {
-            BackgroundTransparency = 0.14,
-            Size = UDim2.new(0, 240, 0, 50)
-        }):Play()
-
+        TweenService:Create(Frame, tweenIn, {BackgroundTransparency = 0.14, Size = UDim2.new(0, 240, 0, 50)}):Play()
         TweenService:Create(Text, tweenIn, {TextTransparency = 0}):Play()
-        TweenService:Create(GlowText, tweenIn, {
-            TextTransparency = 0.35,
-            TextStrokeTransparency = 0.5
-        }):Play()
+        TweenService:Create(GlowText, tweenIn, {TextTransparency = 0.35, TextStrokeTransparency = 0.5}):Play()
         TweenService:Create(Shadow, tweenIn, {BackgroundTransparency = 0.84}):Play()
 
         task.delay(2.2, function()
-            TweenService:Create(Frame, tweenOut, {
-                BackgroundTransparency = 1,
-                Size = UDim2.new(0, 190, 0, 38)
-            }):Play()
-
+            TweenService:Create(Frame, tweenOut, {BackgroundTransparency = 1, Size = UDim2.new(0, 190, 0, 38)}):Play()
             TweenService:Create(Text, tweenOut, {TextTransparency = 1}):Play()
-            TweenService:Create(GlowText, tweenOut, {
-                TextTransparency = 1,
-                TextStrokeTransparency = 1
-            }):Play()
+            TweenService:Create(GlowText, tweenOut, {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
             TweenService:Create(Shadow, tweenOut, {BackgroundTransparency = 1}):Play()
 
             task.delay(1.5, function()
@@ -227,10 +210,10 @@ end)
 
 local safeLP = Players.LocalPlayer
 
-local REGULAR_ASSET       = "rbxassetid://87737612757214"
-local OWNER_ASSET         = "rbxassetid://81991054282907"
-local SPECIAL_ASSET_1     = "rbxassetid://76327184604575"
-local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"
+local REGULAR_ASSET       = "rbxassetid://87737612757214"      -- executed members
+local OWNER_ASSET         = "rbxassetid://81991054282907"      -- owner
+local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"      -- special 1
+local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"     -- special 2
 
 local OWNER_USERID        = 7252040461
 local SPECIAL_USERID_1    = 9601915641
@@ -270,7 +253,7 @@ local function addTag(char, userid)
     elseif userid == SPECIAL_USERID_2 then
         img.Image = SPECIAL_ASSET_2
     else
-        img.Image = REGULAR_ASSET
+        img.Image = REGULAR_ASSET  -- executed member
     end
 
     img.Parent = bb
@@ -301,7 +284,7 @@ if special1 then tryTagPlayer(special1) end
 local special2 = Players:GetPlayerByUserId(SPECIAL_USERID_2)
 if special2 then tryTagPlayer(special2) end
 
--- Tag sync via chat – ONLY tag on INITIAL_SIGNAL (they executed the script)
+-- Tag sync via chat – both signals apply correct tag
 local ch = GeneralChannel
 if ch then
     local INITIAL_SIGNAL  = "♪؍؍"
@@ -318,17 +301,21 @@ if ch then
 
         if id == safeLP.UserId then return end
 
-        if text == INITIAL_SIGNAL then
+        if text == INITIAL_SIGNAL or text == RESPONSE_SIGNAL then
             if not known[id] then
                 local p = Players:GetPlayerByUserId(id)
-                if p then tryTagPlayer(p) end
+                if p then 
+                    -- Use the correct asset based on who they are
+                    tryTagPlayer(p)
+                end
             end
 
-            task.delay(0.8, function()
-                pcall(ch.SendAsync, ch, RESPONSE_SIGNAL)
-            end)
+            if text == INITIAL_SIGNAL then
+                task.delay(0.8, function()
+                    pcall(ch.SendAsync, ch, RESPONSE_SIGNAL)
+                end)
+            end
         end
-        -- No tagging from RESPONSE_SIGNAL
     end)
 end
 
@@ -351,7 +338,7 @@ task.spawn(function()
 end)
 
 -- ───────────────────────────────────────────────
---                   COMMANDS (using MessageReceived)
+--                   COMMANDS
 -- ───────────────────────────────────────────────
 
 if GeneralChannel then
