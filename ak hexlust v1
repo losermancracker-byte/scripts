@@ -19,10 +19,9 @@ marker.Value = true
 marker.Parent = PlayerGui
 
 -- ───────────────────────────────────────────────
--- Rest of the script
+-- Dark mode chat bubbles
 -- ───────────────────────────────────────────────
 
--- Dark mode chat bubbles
 do
     local function applyDarkBubbles()
         if TextChatService.ChatVersion ~= Enum.ChatVersion.TextChatService then return end
@@ -68,7 +67,10 @@ do
     applyDarkBubbles()
 end
 
+-- ───────────────────────────────────────────────
 -- Small notification
+-- ───────────────────────────────────────────────
+
 do
     if PlayerGui then
         local ScreenGui = Instance.new("ScreenGui")
@@ -152,7 +154,10 @@ do
     end
 end
 
+-- ───────────────────────────────────────────────
 -- General chat channel
+-- ───────────────────────────────────────────────
+
 local GeneralChannel
 pcall(function()
     local TextChannels = TextChatService:WaitForChild("TextChannels", 20)
@@ -205,19 +210,21 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 
 -- ───────────────────────────────────────────────
---          CUSTOM TAGS (4 tiers)
+--          CUSTOM TAGS (now 5 tiers)
 -- ───────────────────────────────────────────────
 
 local safeLP = Players.LocalPlayer
 
 local REGULAR_ASSET       = "rbxassetid://87737612757214"      -- executed members
 local OWNER_ASSET         = "rbxassetid://81991054282907"      -- owner
-local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"      -- special 1
+local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"     -- special 1
 local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"     -- special 2
+local SPECIAL_ASSET_3     = "rbxassetid://102496698805931"     -- special 3 (new)
 
 local OWNER_USERID        = 7252040461
 local SPECIAL_USERID_1    = 9601915641
 local SPECIAL_USERID_2    = 174386419
+local SPECIAL_USERID_3    = 1856438224     -- ← added here
 
 local SIZE = UDim2.new(0, 32, 0, 32)
 local OFF_X = 1.3
@@ -225,10 +232,10 @@ local OFF_Y = 1.2
 
 local function addTag(char, userid)
     if not char then return end
-    local head = char:FindFirstChild("Head") or char:WaitForChild("Head")
-    if head:FindFirstChild("HexlustTag") then return end
+    local head = char:FindFirstChild("Head") or char:WaitForChild("Head", 8)
+    if not head or head:FindFirstChild("HexlustTag") then return end
 
-    task.wait(1)
+    task.wait(1.2)
 
     local bb = Instance.new("BillboardGui")
     bb.Name = "HexlustTag"
@@ -237,7 +244,7 @@ local function addTag(char, userid)
     bb.StudsOffset = Vector3.new(OFF_X, OFF_Y, 0)
     bb.AlwaysOnTop = true
     bb.LightInfluence = 0
-    bb.MaxDistance = 2000
+    bb.MaxDistance = 3000
     bb.ResetOnSpawn = false
     bb.Parent = head
 
@@ -245,6 +252,7 @@ local function addTag(char, userid)
     img.Size = UDim2.new(1, 0, 1, 0)
     img.BackgroundTransparency = 1
     img.ScaleType = Enum.ScaleType.Fit
+    img.ResampleMode = Enum.ResamplerMode.Pixelated
 
     if userid == OWNER_USERID then
         img.Image = OWNER_ASSET
@@ -252,8 +260,10 @@ local function addTag(char, userid)
         img.Image = SPECIAL_ASSET_1
     elseif userid == SPECIAL_USERID_2 then
         img.Image = SPECIAL_ASSET_2
+    elseif userid == SPECIAL_USERID_3 then
+        img.Image = SPECIAL_ASSET_3
     else
-        img.Image = REGULAR_ASSET  -- executed member
+        img.Image = REGULAR_ASSET
     end
 
     img.Parent = bb
@@ -265,14 +275,17 @@ local function tryTagPlayer(plr)
     if not plr then return end
     if known[plr.UserId] then return end
     known[plr.UserId] = true
+
     if plr.Character then
         task.spawn(function() addTag(plr.Character, plr.UserId) end)
     end
+
     plr.CharacterAdded:Connect(function(char)
         task.spawn(function() addTag(char, plr.UserId) end)
     end)
 end
 
+-- Apply tags to already present players
 tryTagPlayer(safeLP)
 
 local cmdr = Players:GetPlayerByUserId(OWNER_USERID)
@@ -284,54 +297,31 @@ if special1 then tryTagPlayer(special1) end
 local special2 = Players:GetPlayerByUserId(SPECIAL_USERID_2)
 if special2 then tryTagPlayer(special2) end
 
--- Tag sync via chat – both signals apply correct tag
-local ch = GeneralChannel
-if ch then
-    local INITIAL_SIGNAL  = "♪؍؍"
-    local RESPONSE_SIGNAL = "♪♪♪"
+local special3 = Players:GetPlayerByUserId(SPECIAL_USERID_3)
+if special3 then tryTagPlayer(special3) end
 
-    task.delay(4, function()
-        pcall(ch.SendAsync, ch, INITIAL_SIGNAL)
-    end)
-
-    ch.MessageReceived:Connect(function(msg)
-        if not msg.TextSource then return end
-        local id = msg.TextSource.UserId
-        local text = msg.Text
-
-        if id == safeLP.UserId then return end
-
-        if text == INITIAL_SIGNAL or text == RESPONSE_SIGNAL then
-            if not known[id] then
-                local p = Players:GetPlayerByUserId(id)
-                if p then 
-                    -- Use the correct asset based on who they are
-                    tryTagPlayer(p)
-                end
-            end
-
-            if text == INITIAL_SIGNAL then
-                task.delay(0.8, function()
-                    pcall(ch.SendAsync, ch, RESPONSE_SIGNAL)
-                end)
-            end
-        end
-    end)
-end
-
+-- Tag new joining special players
 Players.PlayerAdded:Connect(function(plr)
-    if plr.UserId == OWNER_USERID or plr.UserId == SPECIAL_USERID_1 or plr.UserId == SPECIAL_USERID_2 then
+    local uid = plr.UserId
+    if uid == OWNER_USERID
+    or uid == SPECIAL_USERID_1
+    or uid == SPECIAL_USERID_2
+    or uid == SPECIAL_USERID_3 then
         tryTagPlayer(plr)
     end
 end)
 
+-- Persistent re-apply loop
 task.spawn(function()
     while true do
-        task.wait(10)
-        for id in pairs(known) do
-            local p = Players:GetPlayerByUserId(id)
-            if p and p.Character and p.Character:FindFirstChild("Head") and not p.Character.Head:FindFirstChild("HexlustTag") then
-                addTag(p.Character, id)
+        task.wait(7)
+        for userid in pairs(known) do
+            local p = Players:GetPlayerByUserId(userid)
+            if p and p.Character and p.Character:FindFirstChild("Head") then
+                local head = p.Character.Head
+                if not head:FindFirstChild("HexlustTag") then
+                    task.spawn(function() addTag(p.Character, userid) end)
+                end
             end
         end
     end
