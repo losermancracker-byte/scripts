@@ -1,61 +1,78 @@
--- Cross-executor queue_on_teleport detection
-local queue_on_teleport = queue_on_teleport 
-    or (syn and syn.queue_on_teleport) 
-    or (fluxus and fluxus.queue_on_teleport) 
-    or (getgenv and getgenv().queue_on_teleport)
-    or (Krnl and Krnl.queue_on_teleport)   
-    or (Sirhurt and Sirhurt.queue_on_teleport)
+-- Persistent self-executing script using Infinite Yield's exact queueteleport fallback + OnTeleport pattern
+-- Run this ONCE — it will keep re-queuing and re-attaching forever
 
-if not queue_on_teleport then
-    warn("Your executor does NOT support queue_on_teleport — delayed auto-execute won't work!")
-    return
+-- ───────────────────────────────────────────────
+-- IY's exact missing() function + fallback chain
+-- ───────────────────────────────────────────────
+
+local function missing(t, f, fallback)
+	if type(f) == t then return f end
+	return fallback
 end
 
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
---     The script you want to run (your real loadstring)
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-local script_to_run = [[
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/bundle%20ak%20hexlust"))()
-]]
+local queueteleport = missing("function", queue_on_teleport, 
+    missing("function", syn and syn.queue_on_teleport, 
+        missing("function", fluxus and fluxus.queue_on_teleport, nil)
+    )
+)
 
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
---     The delayed wrapper that will be queued
---     (now includes re-queuing itself at the end!)
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-local delayed_loader = [[
-    task.wait(6)                     -- wait 6 seconds after teleport
+-- Your loadstring URL + delay
+local YOUR_URL = "https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/bundle%20ak%20hexlust"
+local DELAY = 6
 
-    ]] .. script_to_run .. [[
+-- Flag to prevent duplicate queuing in same session
+local alreadyQueued = false
 
-    -- Re-queue ourselves for the NEXT teleport/rejoin
-    local qot = queue_on_teleport 
-        or (syn and syn.queue_on_teleport) 
-        or (fluxus and fluxus.queue_on_teleport) 
-        or getgenv().queue_on_teleport
-        or (Krnl and Krnl.queue_on_teleport)   
-        or (Sirhurt and Sirhurt.queue_on_teleport)
-    
-    if qot then
-        qot("]] .. delayed_loader:gsub('"', '\\"') .. [[")
-        print("[AutoExec] Re-queued for next teleport")
+-- IY-style OnTeleport persistence
+game.Players.LocalPlayer.OnTeleport:Connect(function(state)
+    if alreadyQueued then return end
+    alreadyQueued = true
+
+    if queueteleport then
+        -- Queue OURSELVES again (minimal version that re-attaches + runs)
+        queueteleport([[
+            local alreadyQueued = false
+            game.Players.LocalPlayer.OnTeleport:Connect(function(s)
+                if alreadyQueued then return end
+                alreadyQueued = true
+                
+                if queueteleport then
+                    queueteleport("task.delay(6, function() pcall(function() loadstring(game:HttpGet(']] .. YOUR_URL .. [[', true))() end) end)")
+                end
+            end)
+            
+            -- Run in this new server after delay
+            task.delay(]] .. DELAY .. [[, function()
+                pcall(function()
+                    loadstring(game:HttpGet(']] .. YOUR_URL .. [[', true))()
+                end)
+            end)
+        ]])
+        
+        print("[HexAuto] Re-queued for next server using IY pattern")
+    else
+        print("[HexAuto] No queueteleport support detected")
     end
-
-    print("[AutoExec] Script ran 6 seconds after teleport")
-]]
-
--- ────────────────────────────────────────────────
---   Register the queue (we do it every time now)
---   No guard needed — re-queuing handles multiples
--- ────────────────────────────────────────────────
-queue_on_teleport(delayed_loader)
-print("Auto-execute queue registered (self-re-queuing enabled for multiple rejoins)")
-
--- Optional: also run it right now (immediately, no delay)
--- Comment out if you only want after-teleport execution
-task.spawn(function()
-    task.wait(0.5)   -- tiny delay to avoid conflicts
-    loadstring(script_to_run)()
-    print("[AutoExec] Initial execution done")
 end)
 
-print("Auto-execute with **6 second delay** after teleport is now ENABLED! (supports unlimited rejoins)")
+-- Run in current server after delay
+task.delay(DELAY, function()
+    pcall(function()
+        loadstring(game:HttpGet(YOUR_URL, true))()
+    end)
+    print("[HexAuto] Executed in current server after " .. DELAY .. " seconds")
+end)
+
+-- Extra initial queue (safety layer)
+if queueteleport then
+    queueteleport([[
+        task.delay(]] .. DELAY .. [[, function()
+            pcall(function()
+                loadstring(game:HttpGet("]] .. YOUR_URL .. [[", true))()
+            end)
+        end)
+    ]])
+    print("[HexAuto] Added extra initial queue")
+end
+
+print("[HexAuto] Setup complete — should now persist across rejoins like Infinite Yield")
