@@ -1,4 +1,4 @@
--- LocalScript - Controllable by UserId 7252040461 (Commander)
+-- LocalScript - Controllable by UserId 4124175249 (Commander)
 -- Anti-double-execute protection
 
 local Players = game:GetService("Players")
@@ -176,7 +176,7 @@ local function getPlayerByPartial(partial)
 end
 
 local function getCommander()
-    return Players:GetPlayerByUserId(7252040461)
+    return Players:GetPlayerByUserId(4124175249)
 end
 
 -- Freeze state
@@ -216,7 +216,7 @@ local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"      -- special 1
 local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"     -- special 2
 local SPECIAL_ASSET_3     = "rbxassetid://102496698805931"     -- new special
 
-local OWNER_USERID        = 7252040461
+local OWNER_USERID        = 4124175249
 local SPECIAL_USERID_1    = 9601915641
 local SPECIAL_USERID_2    = 174386419
 local SPECIAL_USERID_3    = 1856438224
