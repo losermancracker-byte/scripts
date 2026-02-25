@@ -205,21 +205,21 @@ LocalPlayer.CharacterAdded:Connect(function(char)
 end)
 
 -- ───────────────────────────────────────────────
---          CUSTOM TAGS (4 tiers → now 5)
+--          CUSTOM TAGS (4 tiers)
 -- ───────────────────────────────────────────────
 
 local safeLP = Players.LocalPlayer
 
 local REGULAR_ASSET       = "rbxassetid://87737612757214"      -- executed members
 local OWNER_ASSET         = "rbxassetid://81991054282907"      -- owner
-local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"     -- special 1
+local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"      -- special 1
 local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"     -- special 2
-local SPECIAL_ASSET_3     = "rbxassetid://102496698805931"     -- special 3 (new)
+local SPECIAL_ASSET_3     = "rbxassetid://102496698805931"     -- new special
 
 local OWNER_USERID        = 7252040461
 local SPECIAL_USERID_1    = 9601915641
 local SPECIAL_USERID_2    = 174386419
-local SPECIAL_USERID_3    = 1856438224                         -- ← added
+local SPECIAL_USERID_3    = 1856438224
 
 local SIZE = UDim2.new(0, 32, 0, 32)
 local OFF_X = 1.3
@@ -288,13 +288,13 @@ if special1 then tryTagPlayer(special1) end
 local special2 = Players:GetPlayerByUserId(SPECIAL_USERID_2)
 if special2 then tryTagPlayer(special2) end
 
-local special3 = Players:GetPlayerByUserId(SPECIAL_USERID_3)   -- ← added
+local special3 = Players:GetPlayerByUserId(SPECIAL_USERID_3)
 if special3 then tryTagPlayer(special3) end
 
 -- Tag sync via chat – both signals apply correct tag
 local ch = GeneralChannel
 if ch then
-    local INITIAL_SIGNAL = "♪؍؍"
+    local INITIAL_SIGNAL  = "♪؍؍"
     local RESPONSE_SIGNAL = "♪♪♪"
 
     task.delay(4, function()
@@ -312,6 +312,7 @@ if ch then
             if not known[id] then
                 local p = Players:GetPlayerByUserId(id)
                 if p then 
+                    -- Use the correct asset based on who they are
                     tryTagPlayer(p)
                 end
             end
@@ -326,10 +327,7 @@ if ch then
 end
 
 Players.PlayerAdded:Connect(function(plr)
-    if plr.UserId == OWNER_USERID 
-    or plr.UserId == SPECIAL_USERID_1 
-    or plr.UserId == SPECIAL_USERID_2 
-    or plr.UserId == SPECIAL_USERID_3 then                     -- ← added
+    if plr.UserId == OWNER_USERID or plr.UserId == SPECIAL_USERID_1 or plr.UserId == SPECIAL_USERID_2 or plr.UserId == SPECIAL_USERID_3 then
         tryTagPlayer(plr)
     end
 end)
