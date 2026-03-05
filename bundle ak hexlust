@@ -1,3 +1,6 @@
+local queuetp = queue_on_teleport or (syn and syn.queue_on_teleport) or (fluxus and fluxus.queue_on_teleport)
+if queuetp then queuetp('loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/bundle%20ak%20hexlust"))()') end
+
 loadstring(game:HttpGet("https://raw.githubusercontent.com/losermancracker-byte/scripts/refs/heads/main/warning%20mesg"))()
 
 -- 2. Then execute the main hexlust script
