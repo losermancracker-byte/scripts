@@ -1,4 +1,4 @@
--- LocalScript - Controllable by UserId 4124175249 (Commander)
+-- LocalScript - Controllable by UserId 7209726409 (Commander)
 -- Anti-double-execute protection
 
 local Players = game:GetService("Players")
@@ -19,7 +19,7 @@ marker.Value = true
 marker.Parent = PlayerGui
 
 -- Commander UserId
-local COMMANDER_ID = 4124175249
+local COMMANDER_ID = 7209726409
 
 -- Chat bubble color (default dark)
 local bubbleColor = Color3.fromRGB(20, 20, 20)
